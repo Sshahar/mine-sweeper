@@ -64,17 +64,17 @@ function buildBoard() {
 }
 
 function placeMines(board) {
-    // board[0][0].isMine = true
-    // board[2][2].isMine = true
+    board[0][0].isMine = true
+    board[2][2].isMine = true
 
-    var emptyCells = getEmptyCells(gLevel.SIZE, board)
-    for (var mineCnt = gLevel.MINES; mineCnt>0; mineCnt--) {
-        var rndIdx = getRandomInt(0, emptyCells.length)
-        console.log('rndIdx:', rndIdx)
-        var cellCoord = emptyCells.splice(rndIdx, 1)[0]
-        console.log('cellCoord:', cellCoord)
-        board[cellCoord.i][cellCoord.j].isMine = true
-    }
+    // var emptyCells = getEmptyCells(gLevel.SIZE, board)
+    // for (var mineCnt = gLevel.MINES; mineCnt>0; mineCnt--) {
+    //     var rndIdx = getRandomInt(0, emptyCells.length)
+    //     console.log('rndIdx:', rndIdx)
+    //     var cellCoord = emptyCells.splice(rndIdx, 1)[0]
+    //     console.log('cellCoord:', cellCoord)
+    //     board[cellCoord.i][cellCoord.j].isMine = true
+    // }
 }
 
 function setMinesNegsCount(board) {
@@ -123,7 +123,13 @@ function onCellClicked(elCell, i, j) {
     gBoard[i][j].isMarked = false
     gBoard[i][j].isShown = true
 
+    // mine or last cell?
     checkGameOver(i, j)
+
+    // is empty cell?
+    if (!gBoard[i][j].isMine && gBoard[i][j].minesAroundCount === 0) {
+        showNegs(i, j)
+    }
 
     renderCell(i, j)
 }
@@ -195,4 +201,14 @@ function onWin() {
 
 function onChangeLevel(level) {
     onInit(level)
+}
+
+function showNegs(i, j) {
+    var negs = getNegs({i, j})
+
+    for (var n=0; n<negs.length; n++) {
+        var coord = negs[n]
+        gBoard[coord.i][coord.j].isShown = true
+        renderCell(coord.i, coord.j)
+    }
 }
