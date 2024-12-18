@@ -7,6 +7,8 @@ var gLevel
 var gGame
 var gFirstMoveCoord
 var gTimer
+var gLeaderboard
+var gUsername = 'Shahar'
 
 var MINE = '<img src="img/mine.png">'
 var MARK = '<img src="img/mark.png">'
@@ -18,26 +20,34 @@ function onInit(level = 4) {
     setLevel(level)
     setGame()
     setTimer()
+    setLeaderboard()
     gBoard = buildBoard()
     renderBoard(gBoard)
+
+    getStorage()
+    // setStorage()
+    // populateLeaderboardForTesting()
 }
 
 function setLevel(level) {
     switch (level) {
         case 4:
             gLevel = {
+                NAME: 'easy',
                 SIZE: 4,
                 MINES: 2
             }
             break
         case 8:
             gLevel = {
+                NAME: 'medium',
                 SIZE: 8,
                 MINES: 14
             }
             break
         case 12:
             gLevel = {
+                NAME: 'expert',
                 SIZE: 12,
                 MINES: 32
             }
@@ -262,10 +272,14 @@ function onLose() {
 function onWin() {
     console.log('you won')
     document.querySelector('.game-state').innerHTML = WIN
+    addLeaderboard()
+    setStorage()
+    renderLeaderboard()
 }
 
 function onChangeLevel(level) {
     onReset(level)
+    renderLeaderboard()
 }
 
 function showNegs(i, j) {
@@ -298,7 +312,7 @@ function onReset(level) {
     level = level ? level : gLevel.SIZE
 
     clearInterval(gTimer.interval)
-    document.querySelector('.game-time').innerHTML = 0 + ' sec'
+    document.querySelector('.game-time').innerHTML = 0
 
     onInit(level)
 }
@@ -310,4 +324,74 @@ function onHintClicked(elHint) {
 
     gGame.isHint = true
     elHint.classList.add('highlight-hint')
+}
+
+function setStorage() {
+    if (typeof (Storage) === "undefined") return
+
+    localStorage.setItem('easyLeaderboard', JSON.stringify(gLeaderboard.easy))
+    localStorage.setItem('mediumLeaderboard', JSON.stringify(gLeaderboard.medium))
+    localStorage.setItem('expertLeaderboard', JSON.stringify(gLeaderboard.expert))
+}
+
+function getStorage() {
+    if (typeof (Storage) === "undefined") return
+    console.log('localStorage.easyLeaderboard:', localStorage.easyLeaderboard)
+    var easy = typeof localStorage.easyLeaderboard === 'undefined' ? [] : JSON.parse(localStorage.easyLeaderboard)
+    var medium = typeof localStorage.mediumLeaderboard === 'undefined' ? [] : JSON.parse(localStorage.mediumLeaderboard)
+    var expert = typeof localStorage.expertLeaderboard === 'undefined' ? [] : JSON.parse(localStorage.expertLeaderboard)
+    gLeaderboard.easy = easy
+    gLeaderboard.medium = medium
+    gLeaderboard.expert = expert
+}
+
+function setLeaderboard() {
+    gLeaderboard = {}
+    getStorage()
+    renderLeaderboard()
+}
+
+function addLeaderboard() {
+    var username = gUsername
+    var score = +document.querySelector('.game-time').innerHTML
+
+    gLeaderboard[`${gLevel.NAME}`].push({ username, score })
+    localStorage.setItem(`${gLevel.NAME}Leaderboard`, JSON.stringify(`gLeaderboard.${gLevel.NAME}`))
+}
+
+function renderLeaderboard() {
+    var strHTML = ''
+
+    // sort leaderboard by score
+    var leaderboard = gLeaderboard[`${gLevel.NAME}`]
+    leaderboard.sort((a, b) => {
+        return a.score - b.score
+    })
+
+
+    for (var i = 0; i < leaderboard.length; i++) {
+        var name = leaderboard[i].username
+        var score = leaderboard[i].score
+
+        strHTML += `<tr>
+        <td>${name}</td>
+        <td>${score}</td>
+        </tr>`
+    }
+
+    var elLeaderboard = document.querySelector('.leaderboard').innerHTML = strHTML
+}
+
+function populateLeaderboardForTesting() {
+    gLeaderboard = {
+        easy: [
+            { username: 'john', score: 3 },
+            { username: 'joe', score: 4.5 },
+
+        ],
+        medium: [{ username: 'john', score: 3 }],
+        expert: [{ username: 'john', score: 3 }],
+        
+    }
+    setStorage()
 }

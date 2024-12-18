@@ -23,7 +23,7 @@
         <section class="stats-container">
             <div>Lives: <span class="lives-count">0</span></div>
 
-            <div class="game-time">0 sec</div>
+            <div><span class="game-time">0</span> sec</div>
 
             <div class="hints">
                 <img onclick="onHintClicked(this)" src="img/hint.png" alt="hint">
@@ -39,7 +39,24 @@
             <input onclick="onChangeLevel(8)" type="radio" name="level">
             <label for="medium">Medium</label>
             <input onclick="onChangeLevel(12)" type="radio" name="level">
-            <label for="hard">Expert</label>
+            <label for="expert">Expert</label>
+        </section>
+
+        <section class="leaderboard-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody class="leaderboard">
+                    <tr>
+                        <td>John</td>
+                        <td>15 sec</td>
+                    </tr>
+                </tbody>
+            </table>
         </section>
     </main>
 
