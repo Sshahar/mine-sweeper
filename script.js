@@ -9,7 +9,7 @@ var MARK = '<img src="img/mark.png">'
 
 function onInit() {
     setLevel()
-    gGame = setGame()
+    setGame()
     gBoard = buildBoard()
     renderBoard(gBoard)
 }
@@ -22,7 +22,12 @@ function setLevel() {
 }
 
 function setGame() {
-
+    gGame = {
+        isOn: false,
+        shownCount: 0,
+        markedCount: 0,
+        secsPassed: 0
+    }
 }
 
 function buildBoard() {
@@ -72,7 +77,8 @@ function renderBoard(board) {
         strHTML += '<tr>'
         for (var j = 0; j < gLevel.SIZE; j++) {
             var cellContent = getCellContent(i, j)
-            strHTML += `<td class="hidden-cell" onclick="onCellClicked(this, ${i}, ${j})" ` +
+            var classNames = board[i][j].isShown ? '' : 'hidden-cell'
+            strHTML += `<td class="${classNames}" onclick="onCellClicked(this, ${i}, ${j})" ` +
                 `oncontextmenu="onCellMarked(${i}, ${j})"` +
                 `data-i="${i}" data-j="${j}">` +
                 `${cellContent}` +
@@ -94,25 +100,44 @@ function renderCell(i, j) {
 }
 
 function onCellClicked(elCell, i, j) {
+    if (gBoard[i][j].isShown) return
+
+    if (gBoard[i][j].isMarked) gGame.markedCount--
+    gGame.shownCount++
+
     gBoard[i][j].isMarked = false
     gBoard[i][j].isShown = true
+
+    checkGameOver(i, j)
+
     renderCell(i, j)
 }
 
 function onCellMarked(i, j) {
     if (gBoard[i][j].isShown) return
+    gGame.markedCount += gBoard[i][j].isMarked ? -1 : 1
+    console.log('gGame.markedCount:', gGame.markedCount)
 
     var elCell = document.querySelector(`td[data-i="${i}"][data-j="${j}"]`)
     elCell.classList.add('hidden-cell')
 
     gBoard[i][j].isMarked = !gBoard[i][j].isMarked
     renderCell(i, j)
+
+    checkGameOver(i, j)
 }
 
-function checkGameOver() {
-    // are all mines marked ?
+function checkGameOver(i, j) {
+    if (gBoard[i][j].isMine && gBoard[i][j].isShown) {
+        onLose()
+        return
+    }
 
+    // are all mines marked ?
     // are all non-mine cells shown?
+    if (gGame.shownCount + gGame.markedCount === Math.pow(gLevel.SIZE, 2)) {
+        onWin()
+    }
 }
 
 function expandShown(board, elCell, i, j) {
@@ -135,4 +160,18 @@ function getCellContent(i, j) {
     if (gBoard[i][j].isMarked) return MARK
     if (gBoard[i][j].isMine) return MINE
     return gBoard[i][j].minesAroundCount
+}
+
+function onLose() {
+    // Reveal all mines
+    for (var i = 0; i < gLevel.SIZE; i++) {
+        for (var j = 0; j < gLevel.SIZE; j++) {
+            if (gBoard[i][j].isMine) gBoard[i][j].isShown = true
+        }
+    }
+    renderBoard(gBoard)
+}
+
+function onWin() {
+    alert('hurray!')
 }
