@@ -1,7 +1,5 @@
 'use strict'
 
-// TODO: fix mark on bomb change cell size
-// TODO: fix table overflows on Expert level
 // TODO: add reset game button
 
 var gBoard
