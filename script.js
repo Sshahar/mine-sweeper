@@ -48,6 +48,7 @@ function setGame() {
         secsPassed: 0,
         LIVES: 2
     }
+    renderStats()
 }
 
 function buildBoard() {
@@ -148,6 +149,7 @@ function onCellMarked(i, j) {
 function checkGameOver(i, j) {
     if (gBoard[i][j].isMine && gBoard[i][j].isShown) {
         gGame.LIVES--
+        renderStats()
         if (gGame.LIVES <= 0) {
             gGame.isOn = false
             onLose()
@@ -232,4 +234,8 @@ function showCell(i, j) {
     gBoard[i][j].isMarked = false
     gBoard[i][j].isShown = true
     renderCell(i, j)
+}
+
+function renderStats() {
+    document.querySelector('.lives-count').innerHTML = gGame.LIVES
 }
