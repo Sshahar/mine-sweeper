@@ -1,0 +1,13 @@
+* {
+    box-sizing: border-box;
+}
+
+div.game-container {
+    background-color: gray;
+    width: min-content;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+}

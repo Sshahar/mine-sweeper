@@ -61,18 +61,17 @@ function getSecDiag(mat) {
 }
 
 function getNegs(coord, radius=1) {
-    if (!isMatInit()) return
-    var tiles = []
+    var cells = []
 
-    for (var i = coord.i - radius; i < ROWS && i <= coord.i + radius; i++) {
-        for (var j = coord.j - radius; j < COLS && j <= coord.j + radius; j++) {
+    for (var i = coord.i - radius; i < gLevel.SIZE && i <= coord.i + radius; i++) {
+        for (var j = coord.j - radius; j < gLevel.SIZE && j <= coord.j + radius; j++) {
             if (i < 0 || j < 0) continue
             if (i === coord.i && j === coord.j) continue
-            tiles.push({ i, j })
+            cells.push({ i, j })
         }
     }
 
-    return tiles
+    return cells
 }
 
 function isMatInit() {
