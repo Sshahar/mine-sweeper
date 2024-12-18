@@ -1,9 +1,10 @@
 * {
     box-sizing: border-box;
+    text-align: center;
 }
 
 :root {
-    --bg-clr: gray
+    --bg-clr: gray;
 }
 
 div.game-container {
@@ -12,8 +13,8 @@ div.game-container {
     margin: auto;
 }
 
-h1 {
-    text-align: center;
+main {
+    min-height: 90vh;
 }
 
 table.game-board {
@@ -27,4 +28,13 @@ table.game-board {
 
 .hidden-cell {
     opacity: 0;
+}
+
+header {
+    height: 5vh;
+}
+
+footer {
+    height: 5vh; 
+    font-size: 2rem;
 }
