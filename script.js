@@ -65,7 +65,7 @@ function setLevel(level) {
 function setHints() {
     var elHints = document.querySelectorAll('.highlight-hint')
 
-    for (var i=0; i<elHints.length; i++) {
+    for (var i = 0; i < elHints.length; i++) {
         elHints[i].classList.remove('highlight-hint')
     }
 }
@@ -182,12 +182,12 @@ function onCellClicked(i, j) {
     gMoveQueue.push({ i, j })
 
     showCell(i, j)
-    
+
     // is empty cell?
     if (!gBoard[i][j].isMine && gBoard[i][j].minesAroundCount === 0) {
         showNegs(i, j)
     }
-    
+
     // mine or last cell?
     checkGameOver(i, j)
 }
@@ -483,7 +483,7 @@ function onSafeClick() {
         renderCell(cell.i, cell.j)
 
         var elCell = getElCell(cell)
-        elCell.classList.add('hidden-cell')
+        if (!gBoard[cell.i][cell.j].isShown) elCell.classList.add('hidden-cell')
     }, 1000, cell)
 
     document.querySelector('.safe-click-count').innerHTML = gGame.safeClickCount
@@ -494,7 +494,7 @@ function getMineCells() {
 
     for (var i = 0; i < gLevel.SIZE; i++) {
         for (var j = 0; j < gLevel.SIZE; j++) {
-            if (gBoard[i][j].isMine) cells.push({i, j})
+            if (gBoard[i][j].isMine) cells.push({ i, j })
         }
     }
 
@@ -504,13 +504,13 @@ function getMineCells() {
 function onMineExterminator() {
     if (!gGame.isOn) return
     if (!gGame.canMineExterminator) return
-    
+
     var mineCells = getMineCells()
-    
+
     for (var totalExterms = 3; totalExterms > 0 && mineCells.length; totalExterms--) {
         var rndIdx = getRandomInt(0, mineCells.length)
         var cell = mineCells.splice(rndIdx, 1)[0]
-        
+
 
         gBoard[cell.i][cell.j].isMine = false
     }
