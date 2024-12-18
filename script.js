@@ -173,7 +173,7 @@ function checkGameOver(i, j) {
     var nonMineShownCnt = 0
     for (var i = 0; i < gLevel.SIZE; i++) {
         for (var j = 0; j < gLevel.SIZE; j++) {
-            if (gBoard[i][j].isMine && gBoard[i][j].isMarked) markedMinesCnt++
+            if (gBoard[i][j].isMine && (gBoard[i][j].isMarked || gBoard[i][j])) markedMinesCnt++
             if (!gBoard[i][j].isMine && gBoard[i][j].isShown) nonMineShownCnt++
         }
     }
