@@ -1,7 +1,5 @@
 'use strict'
 
-// TODO: add reset game button
-
 var gBoard
 var gLevel
 var gGame
@@ -325,6 +323,7 @@ function renderStats() {
 
 function onReset(level) {
     level = level ? level : gLevel.SIZE
+    gIsUndo = false
 
     clearInterval(gTimer.interval)
     document.querySelector('.game-time').innerHTML = 0
@@ -423,6 +422,7 @@ function onEditorClick(elBtn) {
 }
 
 function onUndo() {
+    if (!gGame.isOn) return
     gIsUndo = true
     // restores board state to last move
     onInit(gLevel.SIZE, true)
@@ -430,7 +430,10 @@ function onUndo() {
     gBoard = _.cloneDeep(gBackupBoard)
     renderBoard(gBoard)
 
-    if (gMoveQueue.length === 1) gGame.isOn = false
+    if (gMoveQueue.length === 1) {
+        onReset(gLevel.SIZE)
+        return
+    }
 
     var moves = _.cloneDeep(gMoveQueue)
     moves.pop()
