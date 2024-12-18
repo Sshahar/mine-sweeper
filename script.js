@@ -443,3 +443,7 @@ function onUndo() {
 
     gIsUndo = false
 }
+
+function onDarkModeToggle() {
+    document.body.classList.toggle('dark-mode')
+}

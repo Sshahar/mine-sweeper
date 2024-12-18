@@ -4,10 +4,19 @@
     background: var(--bg-clr);
 }
 
+body {
+    background-color: var(--bg-clr-dark-mode);
+}
+
 :root {
     --bg-clr: #bdbdbd;
     --hint-clr: yellow;
     --bg-edit-btn: #00a9e9;
+    --bg-clr-dark-mode: black;
+}
+
+.dark-mode {
+    --bg-clr: #747474;
 }
 
 section.game-container {
