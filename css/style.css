@@ -1,6 +1,7 @@
 * {
     box-sizing: border-box;
     text-align: center;
+    background: var(--bg-clr);
 }
 
 :root {
@@ -19,16 +20,19 @@ main {
 }
 
 table.game-board {
+    margin: auto auto;
+    margin-top: auto;
     table-layout: fixed;
-    width: 100%;
-    height: 100%;
+    /* width: 100%; */
+    /* height: 100%; */
     border-collapse: collapse;
 }
 
 .game-board td {
     /* padding: 1rem; */
     border: 3px solid black;
-    height: 25%;
+    height: 55px;
+    width: 55px;
 
 }
 
