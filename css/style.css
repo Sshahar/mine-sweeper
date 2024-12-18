@@ -6,6 +6,7 @@
 
 :root {
     --bg-clr: #bdbdbd;
+    --hint-clr: yellow;
 }
 
 section.game-container {
@@ -51,4 +52,8 @@ footer {
 
 .btn {
     cursor: pointer;
+}
+
+.highlight-hint {
+    background-color: var(--hint-clr);
 }

@@ -99,6 +99,7 @@ function setMinesNegsCount(board) {
     for (var i = 0; i < gLevel.SIZE; i++) {
         for (var j = 0; j < gLevel.SIZE; j++) {
             board[i][j].minesAroundCount = getNegMines({ i, j }, board).length
+            renderCell(i, j)
         }
     }
 }
@@ -125,8 +126,7 @@ function renderBoard(board) {
 }
 
 function renderCell(i, j) {
-    if (!gBoard[i][j].isShown && !gBoard[i][j].isMarked) return
-
+    if (!gBoard[i][j].isShown && !gBoard[i][j].isMarked && !gGame.isHint) return
     var elCell = document.querySelector(`td[data-i="${i}"][data-j="${j}"]`)
     elCell.innerHTML = getCellContent(i, j)
     elCell.classList.remove('hidden-cell')
@@ -134,10 +134,15 @@ function renderCell(i, j) {
 
 function onCellClicked(elCell, i, j) {
     if (!gGame.isOn) return
+
     if (gGame.shownCount === 0) {
         gFirstMoveCoord = { i, j }
         setMines(gBoard)
         startTimer()
+    } else if (gGame.isHint) {
+        peekAround({ i, j })
+        gGame.isHint = false
+        return
     }
 
     showCell(i, j)
@@ -151,6 +156,29 @@ function onCellClicked(elCell, i, j) {
     }
 }
 
+function peekAround(coord) {
+    var peekCells = [coord].concat(getNegs(coord))
+
+    for (var n = 0; n < peekCells.length; n++) {
+        var cell = peekCells[n]
+        renderCell(cell.i, cell.j)
+    }
+    setTimeout(hideCells, 1000, peekCells)
+}
+
+function hideCells(cells) {
+    for (var n = 0; n < cells.length; n++) {
+        var cell = cells[n]
+        var elCell = getElCell(cell)
+        gBoard[cell.i][cell.j].isMarked = false
+        if (!gBoard[cell.i][cell.j].isShown) elCell.classList.add('hidden-cell')
+    }
+}
+
+function getElCell(coord) {
+    return document.querySelector(`td[data-i="${coord.i}"][data-j="${coord.j}"]`)
+}
+
 function onCellMarked(i, j) {
     if (gBoard[i][j].isShown) return
     if (!gGame.isOn) return
@@ -158,7 +186,7 @@ function onCellMarked(i, j) {
     gGame.markedCount += gBoard[i][j].isMarked ? -1 : 1
     console.log('gGame.markedCount:', gGame.markedCount)
 
-    var elCell = document.querySelector(`td[data-i="${i}"][data-j="${j}"]`)
+    var elCell = getElCell({ i, j })
     elCell.classList.add('hidden-cell')
 
     gBoard[i][j].isMarked = !gBoard[i][j].isMarked
@@ -273,4 +301,13 @@ function onReset(level) {
     document.querySelector('.game-time').innerHTML = 0 + ' sec'
 
     onInit(level)
+}
+
+function onHintClicked(elHint) {
+    // TODO: use Model instead of DOM
+    if (elHint.classList.contains('highlight-hint')) return
+    if (!gGame.shownCount) return // disable hints on first turn 
+
+    gGame.isHint = true
+    elHint.classList.add('highlight-hint')
 }
