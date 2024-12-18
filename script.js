@@ -11,6 +11,7 @@ var gLeaderboard
 var gMoveQueue
 var gBackupBoard
 var gIsUndo
+var gMegaHint
 
 var MINE = '<img src="img/mine.png">'
 var MARK = '<img src="img/mark.png">'
@@ -31,6 +32,7 @@ function onInit(level = 4, isUndo) {
     if (!isUndo) {
         setUndo()
         setTimer()
+        setMegaHint()
         gIsUndo = false
     }
     // setStorage()
@@ -80,6 +82,7 @@ function setGame() {
         isEditorMode: false,
         safeClickCount: 3,
         canMineExterminator: true,
+        canMegaHint: true,
     }
     renderStats()
     document.querySelector('.game-state').innerHTML = ONGOING
@@ -91,6 +94,14 @@ function setTimer() {
 
 function setUndo() {
     gMoveQueue = []
+}
+
+function setMegaHint() {
+    gMegaHint = {
+        canMegaHint: true,
+        state: -1,
+        isMegaHint: false,
+    }
 }
 
 function buildBoard() {
@@ -171,13 +182,17 @@ function onCellClicked(i, j) {
         if (!gIsUndo) startTimer()
         gBackupBoard = _.cloneDeep(gBoard)
     } else if (gGame.isHint) {
-        peekAround({ i, j })
+        revealHint({ i, j })
         gGame.isHint = false
         return
     } else if (gGame.isEditorMode) {
         onEditorMode(i, j)
         return
     } else if (!gGame.isOn) return
+    else if (gMegaHint.isMegaHint) {
+        handleMegaHint(i, j)
+        return
+    }
 
     gMoveQueue.push({ i, j })
 
@@ -192,23 +207,24 @@ function onCellClicked(i, j) {
     checkGameOver(i, j)
 }
 
-function peekAround(coord) {
+function revealHint(coord, revealMs = 1000) {
     var peekCells = [coord].concat(getNegs(coord))
 
     for (var n = 0; n < peekCells.length; n++) {
         var cell = peekCells[n]
+        gBoard[cell.i][cell.j].isMarked = false
         renderCell(cell.i, cell.j)
     }
-    setTimeout(hideCells, 1000, peekCells)
+    setTimeout(hideCells, revealMs, peekCells)
 }
 
 function hideCells(cells) {
     for (var n = 0; n < cells.length; n++) {
         var cell = cells[n]
         var elCell = getElCell(cell)
-        gBoard[cell.i][cell.j].isMarked = false
         if (!gBoard[cell.i][cell.j].isShown) elCell.classList.add('hidden-cell')
     }
+    gGame.isHint = false
 }
 
 function getElCell(coord) {
@@ -364,7 +380,6 @@ function setStorage() {
 
 function getStorage() {
     if (typeof (Storage) === "undefined") return
-    console.log('localStorage.easyLeaderboard:', localStorage.easyLeaderboard)
     var easy = typeof localStorage.easyLeaderboard === 'undefined' ? [] : JSON.parse(localStorage.easyLeaderboard)
     var medium = typeof localStorage.mediumLeaderboard === 'undefined' ? [] : JSON.parse(localStorage.mediumLeaderboard)
     var expert = typeof localStorage.expertLeaderboard === 'undefined' ? [] : JSON.parse(localStorage.expertLeaderboard)
@@ -519,4 +534,37 @@ function onMineExterminator() {
     renderBoard(gBoard)
 
     gGame.canMineExterminator = false
+}
+
+function onMegaHint() {
+    if (!gMegaHint.canMegaHint) return
+    gMegaHint.state = 0
+    gMegaHint.canMegaHint = false
+    gMegaHint.isMegaHint = true
+}
+
+
+function handleMegaHint(i, j) {
+    if (gMegaHint.state === 0) { // select top left corner
+        gMegaHint.coord1 = { i, j }
+    } else if (gMegaHint.state === 1) { // select bot right corner
+        gMegaHint.coord2 = { i, j }
+        
+        // show area for a few seconds
+        var cells = getCellsInArea(gMegaHint.coord1, gMegaHint.coord2)
+        showCells(cells, 2000)
+        gMegaHint.isMegaHint = false
+    }
+
+    gMegaHint.state++
+}
+
+function showCells(cells, revealMs) {
+    gGame.isHint = true
+    for (var n = 0; n < cells.length; n++) {
+        var cell = cells[n]
+        gBoard[cell.i][cell.j].isMarked = false
+        renderCell(cell.i, cell.j)
+    }
+    setTimeout(hideCells, revealMs, cells)
 }

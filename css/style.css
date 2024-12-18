@@ -13,6 +13,7 @@ body {
     --hint-clr: yellow;
     --bg-edit-btn: #00a9e9;
     --bg-safe-click: #00a9e9;
+    --bg-mega-hint: #00a9e9;
     --bg-clr-dark-mode: black;
 }
 
@@ -87,4 +88,8 @@ footer {
 
 .btn-mine-exterminator {
     border: none;
+}
+
+button.btn-mega-hint {
+    background-color: var(--bg-mega-hint);
 }

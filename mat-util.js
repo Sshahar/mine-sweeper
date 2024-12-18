@@ -188,3 +188,15 @@ function getBotCoords(board, empty) {
     }
     return lowestRow
 }
+
+function getCellsInArea(coord1, coord2) {
+    var cells = []
+
+    for (var i = coord1.i; i <= coord2.i; i++) {
+        for (var j = coord1.j; j <= coord2.j; j++) {
+            cells.push({i, j})
+        }
+    }
+
+    return cells
+}
