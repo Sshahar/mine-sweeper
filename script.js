@@ -1,5 +1,7 @@
 'use strict'
 
+// TODO: fix UNDO reset safeClickCount: 3, canMineExterminator: true,
+
 var gBoard
 var gLevel
 var gGame
@@ -21,6 +23,7 @@ function onInit(level = 4, isUndo) {
     setLevel(level)
     setGame()
     setLeaderboard()
+    setHints()
     gBoard = buildBoard()
     renderBoard(gBoard)
     getStorage()
@@ -59,15 +62,24 @@ function setLevel(level) {
     }
 }
 
+function setHints() {
+    var elHints = document.querySelectorAll('.highlight-hint')
+
+    for (var i=0; i<elHints.length; i++) {
+        elHints[i].classList.remove('highlight-hint')
+    }
+}
+
 function setGame() {
     gGame = {
         isOn: false,
         shownCount: 0,
         markedCount: 0,
         secsPassed: 0,
-        LIVES: 2,
+        LIVES: 5,
         isEditorMode: false,
         safeClickCount: 3,
+        canMineExterminator: true,
     }
     renderStats()
     document.querySelector('.game-state').innerHTML = ONGOING
@@ -170,14 +182,14 @@ function onCellClicked(i, j) {
     gMoveQueue.push({ i, j })
 
     showCell(i, j)
-
-    // mine or last cell?
-    checkGameOver(i, j)
-
+    
     // is empty cell?
     if (!gBoard[i][j].isMine && gBoard[i][j].minesAroundCount === 0) {
         showNegs(i, j)
     }
+    
+    // mine or last cell?
+    checkGameOver(i, j)
 }
 
 function peekAround(coord) {
@@ -274,7 +286,11 @@ function onLose() {
     // Reveal all mines
     for (var i = 0; i < gLevel.SIZE; i++) {
         for (var j = 0; j < gLevel.SIZE; j++) {
-            if (gBoard[i][j].isMine) gBoard[i][j].isShown = true
+            if (gBoard[i][j].isMine) {
+                gBoard[i][j].isShown = true
+                gBoard[i][j].isMarked = false
+            }
+
         }
     }
     renderBoard(gBoard)
@@ -465,10 +481,42 @@ function onSafeClick() {
     setTimeout(() => {
         gBoard[cell.i][cell.j].isSafe = false
         renderCell(cell.i, cell.j)
-        
+
         var elCell = getElCell(cell)
         elCell.classList.add('hidden-cell')
     }, 1000, cell)
 
     document.querySelector('.safe-click-count').innerHTML = gGame.safeClickCount
+}
+
+function getMineCells() {
+    var cells = []
+
+    for (var i = 0; i < gLevel.SIZE; i++) {
+        for (var j = 0; j < gLevel.SIZE; j++) {
+            if (gBoard[i][j].isMine) cells.push({i, j})
+        }
+    }
+
+    return cells
+}
+
+function onMineExterminator() {
+    if (!gGame.isOn) return
+    if (!gGame.canMineExterminator) return
+    
+    var mineCells = getMineCells()
+    
+    for (var totalExterms = 3; totalExterms > 0 && mineCells.length; totalExterms--) {
+        var rndIdx = getRandomInt(0, mineCells.length)
+        var cell = mineCells.splice(rndIdx, 1)[0]
+        
+
+        gBoard[cell.i][cell.j].isMine = false
+    }
+
+    setMinesNegsCount(gBoard)
+    renderBoard(gBoard)
+
+    gGame.canMineExterminator = false
 }

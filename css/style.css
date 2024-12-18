@@ -79,3 +79,12 @@ footer {
 .btn-safe-click {
     background-color: var(--bg-safe-click);
 }
+
+.top-container {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.btn-mine-exterminator {
+    border: none;
+}
