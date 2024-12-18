@@ -121,6 +121,8 @@ function renderCell(i, j) {
 }
 
 function onCellClicked(elCell, i, j) {
+    if (!gGame.isOn) return
+    
     showCell(i, j)
 
     // mine or last cell?
@@ -134,6 +136,8 @@ function onCellClicked(elCell, i, j) {
 
 function onCellMarked(i, j) {
     if (gBoard[i][j].isShown) return
+    if (!gGame.isOn) return
+
     gGame.markedCount += gBoard[i][j].isMarked ? -1 : 1
     console.log('gGame.markedCount:', gGame.markedCount)
 
