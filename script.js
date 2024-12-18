@@ -7,23 +7,38 @@ var gGame
 var MINE = '<img src="img/mine.png">'
 var MARK = '<img src="img/mark.png">'
 
-function onInit() {
-    setLevel()
+function onInit(level = 4) {
+    setLevel(level)
     setGame()
     gBoard = buildBoard()
     renderBoard(gBoard)
 }
 
-function setLevel() {
-    gLevel = {
-        SIZE: 4,
-        MINES: 2
+function setLevel(level) {
+    switch (level) {
+        case 4:
+            gLevel = {
+                SIZE: 4,
+                MINES: 2
+            }
+            break
+        case 8:
+            gLevel = {
+                SIZE: 8,
+                MINES: 14
+            }
+            break
+        case 12:
+            gLevel = {
+                SIZE: 12,
+                MINES: 32
+            }
     }
 }
 
 function setGame() {
     gGame = {
-        isOn: false,
+        isOn: true,
         shownCount: 0,
         markedCount: 0,
         secsPassed: 0
@@ -49,17 +64,17 @@ function buildBoard() {
 }
 
 function placeMines(board) {
-    board[0][0].isMine = true
-    board[2][2].isMine = true
+    // board[0][0].isMine = true
+    // board[2][2].isMine = true
 
-    // var emptyCells = getEmptyCells(gLevel.SIZE, board)
-    // for (var mineCnt = gLevel.MINES; mineCnt>0; mineCnt--) {
-    //     var rndIdx = getRandomInt(0, emptyCells.length)
-    //     console.log('rndIdx:', rndIdx)
-    //     var cellCoord = emptyCells.splice(rndIdx, 1)[0]
-    //     console.log('cellCoord:', cellCoord)
-    //     board[cellCoord.i][cellCoord.j].isMine = true
-    // }
+    var emptyCells = getEmptyCells(gLevel.SIZE, board)
+    for (var mineCnt = gLevel.MINES; mineCnt>0; mineCnt--) {
+        var rndIdx = getRandomInt(0, emptyCells.length)
+        console.log('rndIdx:', rndIdx)
+        var cellCoord = emptyCells.splice(rndIdx, 1)[0]
+        console.log('cellCoord:', cellCoord)
+        board[cellCoord.i][cellCoord.j].isMine = true
+    }
 }
 
 function setMinesNegsCount(board) {
@@ -129,6 +144,7 @@ function onCellMarked(i, j) {
 
 function checkGameOver(i, j) {
     if (gBoard[i][j].isMine && gBoard[i][j].isShown) {
+        gGame.isOn = false
         onLose()
         return
     }
@@ -136,6 +152,7 @@ function checkGameOver(i, j) {
     // are all mines marked ?
     // are all non-mine cells shown?
     if (gGame.shownCount + gGame.markedCount === Math.pow(gLevel.SIZE, 2)) {
+        gGame.isOn = false
         onWin()
     }
 }
@@ -174,4 +191,8 @@ function onLose() {
 
 function onWin() {
     alert('hurray!')
+}
+
+function onChangeLevel(level) {
+    onInit(level)
 }

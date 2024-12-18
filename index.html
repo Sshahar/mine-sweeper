@@ -13,6 +13,16 @@
 
     <main>
         <div class="game-container"></div>
+
+        <div class="level-container">
+            <h2>Choose level:</h2>
+            <input onclick="onChangeLevel(4)" type="radio" name="difficulty" checked>
+            <label for="easy">Beginner</label>
+            <input onclick="onChangeLevel(8)" type="radio" name="difficulty">
+            <label for="medium">Medium</label>
+            <input onclick="onChangeLevel(12)" type="radio" name="difficulty">
+            <label for="hard">Expert</label>
+        </div>
     </main>
 
     <footer>Shahar's game</footer>
