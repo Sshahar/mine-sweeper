@@ -7,6 +7,7 @@
 var gBoard
 var gLevel
 var gGame
+var gFirstMoveCoord
 
 var MINE = '<img src="img/mine.png">'
 var MARK = '<img src="img/mark.png">'
@@ -62,25 +63,26 @@ function buildBoard() {
         }
     }
 
-    // Set the mines
-    placeMines(board)
-    setMinesNegsCount(board)
-
     return board
 }
 
-function placeMines(board) {
-    board[0][0].isMine = true
-    board[2][2].isMine = true
+function setMines(board) {
+    placeMines(board)
+    setMinesNegsCount(board)
+}
 
-    // var emptyCells = getEmptyCells(gLevel.SIZE, board)
-    // for (var mineCnt = gLevel.MINES; mineCnt>0; mineCnt--) {
-    //     var rndIdx = getRandomInt(0, emptyCells.length)
-    //     console.log('rndIdx:', rndIdx)
-    //     var cellCoord = emptyCells.splice(rndIdx, 1)[0]
-    //     console.log('cellCoord:', cellCoord)
-    //     board[cellCoord.i][cellCoord.j].isMine = true
-    // }
+function placeMines(board) {
+    // board[0][0].isMine = true
+    // board[2][2].isMine = true
+
+    var emptyCells = getEmptyCells(gLevel.SIZE, board)
+    for (var mineCnt = gLevel.MINES; mineCnt>0; mineCnt--) {
+        var rndIdx = getRandomInt(0, emptyCells.length)
+        console.log('rndIdx:', rndIdx)
+        var cellCoord = emptyCells.splice(rndIdx, 1)[0]
+        console.log('cellCoord:', cellCoord)
+        board[cellCoord.i][cellCoord.j].isMine = true
+    }
 }
 
 function setMinesNegsCount(board) {
@@ -122,6 +124,10 @@ function renderCell(i, j) {
 
 function onCellClicked(elCell, i, j) {
     if (!gGame.isOn) return
+    if (gGame.shownCount === 0) {
+        gFirstMoveCoord = {i, j}
+        setMines(gBoard)
+    }
     
     showCell(i, j)
 
