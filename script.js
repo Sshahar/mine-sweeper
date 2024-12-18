@@ -8,7 +8,6 @@ var gGame
 var gFirstMoveCoord
 var gTimer
 var gLeaderboard
-var gUsername = 'Shahar'
 
 var MINE = '<img src="img/mine.png">'
 var MARK = '<img src="img/mark.png">'
@@ -357,9 +356,11 @@ function setLeaderboard() {
 }
 
 function addLeaderboard() {
-    var username = gUsername
+    var username = document.querySelector('.username').value
     var score = +document.querySelector('.game-time').innerHTML
 
+    if (!username) return // don't add user with no name to leaderboard
+    
     gLeaderboard[`${gLevel.NAME}`].push({ username, score })
     localStorage.setItem(`${gLevel.NAME}Leaderboard`, JSON.stringify(`gLeaderboard.${gLevel.NAME}`))
 }
