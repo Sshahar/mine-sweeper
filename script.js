@@ -213,6 +213,8 @@ function showNegs(i, j) {
     for (var n=0; n<negs.length; n++) {
         var coord = negs[n]
         gBoard[coord.i][coord.j].isShown = true
+        gBoard[coord.i][coord.j].isMarked = false
+
         renderCell(coord.i, coord.j)
     }
 }
