@@ -37,11 +37,24 @@ function buildBoard() {
     }
     
     // Set the mines
-    board[0][0].isMine = true
-    board[2][2].isMine = true
+    placeMines(board)
     setMinesNegsCount(board)
     
     return board
+}
+
+function placeMines(board) {
+    board[0][0].isMine = true
+    board[2][2].isMine = true
+
+    // var emptyCells = getEmptyCells(gLevel.SIZE, board)
+    // for (var mineCnt = gLevel.MINES; mineCnt>0; mineCnt--) {
+    //     var rndIdx = getRandomInt(0, emptyCells.length)
+    //     console.log('rndIdx:', rndIdx)
+    //     var cellCoord = emptyCells.splice(rndIdx, 1)[0]
+    //     console.log('cellCoord:', cellCoord)
+    //     board[cellCoord.i][cellCoord.j].isMine = true
+    // }
 }
 
 function setMinesNegsCount(board) {

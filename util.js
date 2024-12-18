@@ -16,7 +16,7 @@ function getRandomColor() {
 
 function sum(arr) {
     var arrSum = 0
-    for (var i=0; i<arr.length; i++) {
+    for (var i = 0; i < arr.length; i++) {
         arrSum += arr[i]
     }
     return arrSum
@@ -37,4 +37,17 @@ function inRange(num, low, high) {
 
 function getFuncName() {
     return getFuncName.caller.name
- }
+}
+
+
+function getEmptyCells(SIZE, board) {
+    var emptyCells = []
+
+    for (var i = 0; i < SIZE; i++) {
+        for (var j = 0; j < SIZE; j++) {
+            if (!board[i][j].isMine) emptyCells.push({ i, j })
+        }
+    }
+
+    return emptyCells
+}
