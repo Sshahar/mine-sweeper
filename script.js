@@ -45,7 +45,8 @@ function setGame() {
         isOn: true,
         shownCount: 0,
         markedCount: 0,
-        secsPassed: 0
+        secsPassed: 0,
+        LIVES: 2
     }
 }
 
@@ -146,8 +147,11 @@ function onCellMarked(i, j) {
 
 function checkGameOver(i, j) {
     if (gBoard[i][j].isMine && gBoard[i][j].isShown) {
-        gGame.isOn = false
-        onLose()
+        gGame.LIVES--
+        if (gGame.LIVES <= 0) {
+            gGame.isOn = false
+            onLose()
+        }
         return
     }
 
@@ -190,6 +194,7 @@ function getCellContent(i, j) {
 }
 
 function onLose() {
+    console.log('you lost')
     // Reveal all mines
     for (var i = 0; i < gLevel.SIZE; i++) {
         for (var j = 0; j < gLevel.SIZE; j++) {
