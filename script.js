@@ -208,18 +208,21 @@ function onChangeLevel(level) {
 }
 
 function showNegs(i, j) {
-    var negs = getNegs({i, j})
+    var negs = getNegs({ i, j })
 
-    for (var n=0; n<negs.length; n++) {
+    for (var n = 0; n < negs.length; n++) {
         var coord = negs[n]
+        var shouldFlipNeg = !gBoard[coord.i][coord.j].isShown
         showCell(coord.i, coord.j)
+        if (!gBoard[coord.i][coord.j].minesAroundCount &&
+            shouldFlipNeg) showNegs(coord.i, coord.j)
     }
 }
 
 function showCell(i, j) {
     if (gBoard[i][j].isShown) return
     if (gBoard[i][j].isMarked) gGame.markedCount--
-    
+
     gGame.shownCount++
     gBoard[i][j].isMarked = false
     gBoard[i][j].isShown = true
