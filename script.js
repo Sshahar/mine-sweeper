@@ -6,6 +6,7 @@ var gBoard
 var gLevel
 var gGame
 var gFirstMoveCoord
+var gTimer
 
 var MINE = '<img src="img/mine.png">'
 var MARK = '<img src="img/mark.png">'
@@ -16,6 +17,7 @@ var ONGOING = '😄'
 function onInit(level = 4) {
     setLevel(level)
     setGame()
+    setTimer()
     gBoard = buildBoard()
     renderBoard(gBoard)
 }
@@ -52,6 +54,12 @@ function setGame() {
     }
     renderStats()
     document.querySelector('.game-state').innerHTML = ONGOING
+}
+
+function setTimer() {
+    gTimer = {
+
+    }
 }
 
 function buildBoard() {
@@ -129,6 +137,7 @@ function onCellClicked(elCell, i, j) {
     if (gGame.shownCount === 0) {
         gFirstMoveCoord = { i, j }
         setMines(gBoard)
+        startTimer()
     }
 
     showCell(i, j)
@@ -164,6 +173,8 @@ function checkGameOver(i, j) {
         renderStats()
         if (gGame.LIVES <= 0) {
             gGame.isOn = false
+            clearInterval(gTimer.interval)
+
             onLose()
         }
         return
@@ -181,6 +192,7 @@ function checkGameOver(i, j) {
     }
     if (markedMinesCnt + nonMineShownCnt === Math.pow(gLevel.SIZE, 2)) {
         gGame.isOn = false
+        clearInterval(gTimer.interval)
         onWin()
     }
 }
@@ -225,7 +237,7 @@ function onWin() {
 }
 
 function onChangeLevel(level) {
-    onInit(level)
+    onReset(level)
 }
 
 function showNegs(i, j) {
@@ -254,7 +266,11 @@ function renderStats() {
     document.querySelector('.lives-count').innerHTML = gGame.LIVES
 }
 
-function onReset() {
-    var level = gLevel.SIZE
+function onReset(level) {
+    level = level ? level : gLevel.SIZE
+
+    clearInterval(gTimer.interval)
+    document.querySelector('.game-time').innerHTML = 0 + ' sec'
+
     onInit(level)
 }

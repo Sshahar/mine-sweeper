@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mine Sweeper</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body onload="onInit()" oncontextmenu="return false">
     <header>
         <h1>Mine Sweeper</h1>
@@ -20,6 +22,8 @@
 
         <section class="stats-container">
             <div>Lives: <span class="lives-count">0</span></div>
+
+            <div class="game-time">0 sec</div>
         </section>
 
         <section class="level-container">
@@ -34,9 +38,10 @@
     </main>
 
     <footer>Shahar's game</footer>
-    
+
     <script src="script.js"></script>
     <script src="util.js"></script>
     <script src="mat-util.js"></script>
 </body>
+
 </html>
