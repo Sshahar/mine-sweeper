@@ -2,12 +2,29 @@
     box-sizing: border-box;
 }
 
+:root {
+    --bg-clr: gray
+}
+
 div.game-container {
-    background-color: gray;
+    background-color: var(--bg-clr);
     width: min-content;
     margin: auto;
 }
 
 h1 {
     text-align: center;
+}
+
+table.game-board {
+    border-collapse: collapse;
+}
+
+.game-container td {
+    padding: 1rem;
+    border: 3px solid black;
+}
+
+.hidden-cell {
+    opacity: 0;
 }

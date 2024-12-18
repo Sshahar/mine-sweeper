@@ -53,13 +53,13 @@ function setMinesNegsCount(board) {
 }
 
 function renderBoard(board) {
-    var strHTML = '<table>'
+    var strHTML = '<table class="game-board">'
 
     for (var i = 0; i < gLevel.SIZE; i++) {
         strHTML += '<tr>'
         for (var j = 0; j < gLevel.SIZE; j++) {
             var cellContent = board[i][j].isMine ? MINE : board[i][j].minesAroundCount
-            strHTML += `<td>`+
+            strHTML += `<td class="hidden-cell" onclick="onCellClicked(this, ${i}, ${j})">`+
             `${cellContent}`+
             `</td>`
         }
@@ -71,7 +71,11 @@ function renderBoard(board) {
 }
 
 function onCellClicked(elCell, i, j) {
+    showCell(elCell, i, j)
+}
 
+function showCell(elCell, i, j) {
+    elCell.classList.remove('hidden-cell')
 }
 
 function onCellMarked(elCell) {
