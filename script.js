@@ -4,8 +4,8 @@ var gBoard
 var gLevel
 var gGame
 
-var MINE = '💣'
-
+var MINE = '<img src="img/mine.png">'
+var MARK = '<img src="img/mark.png">'
 
 function onInit() {
     setLevel()
@@ -35,11 +35,11 @@ function buildBoard() {
             board[i][j] = { minesAroundCount: 0, isShown: false, isMine: false, isMarked: false }
         }
     }
-    
+
     // Set the mines
     placeMines(board)
     setMinesNegsCount(board)
-    
+
     return board
 }
 
@@ -66,33 +66,47 @@ function setMinesNegsCount(board) {
 }
 
 function renderBoard(board) {
-    var strHTML = '<table class="game-board">'
+    var strHTML = `<table class="game-board"><tbody>`
 
     for (var i = 0; i < gLevel.SIZE; i++) {
         strHTML += '<tr>'
         for (var j = 0; j < gLevel.SIZE; j++) {
-            var cellContent = board[i][j].isMine ? MINE : board[i][j].minesAroundCount
-            strHTML += `<td class="hidden-cell" onclick="onCellClicked(this, ${i}, ${j})">`+
-            `${cellContent}`+
-            `</td>`
+            var cellContent = getCellContent(i, j)
+            strHTML += `<td class="hidden-cell" onclick="onCellClicked(this, ${i}, ${j})" ` +
+                `oncontextmenu="onCellMarked(${i}, ${j})"` +
+                `data-i="${i}" data-j="${j}">` +
+                `${cellContent}` +
+                `</td>`
         }
         strHTML += '</tr>'
     }
 
-    strHTML += '</table>'
+    strHTML += '</tbody></table>'
     document.querySelector('div.game-container').innerHTML = strHTML
 }
 
-function onCellClicked(elCell, i, j) {
-    showCell(elCell, i, j)
-}
+function renderCell(i, j) {
+    if (!gBoard[i][j].isShown && !gBoard[i][j].isMarked) return
 
-function showCell(elCell, i, j) {
+    var elCell = document.querySelector(`td[data-i="${i}"][data-j="${j}"]`)
+    elCell.innerHTML = getCellContent(i, j)
     elCell.classList.remove('hidden-cell')
 }
 
-function onCellMarked(elCell) {
+function onCellClicked(elCell, i, j) {
+    gBoard[i][j].isMarked = false
+    gBoard[i][j].isShown = true
+    renderCell(i, j)
+}
 
+function onCellMarked(i, j) {
+    if (gBoard[i][j].isShown) return
+
+    var elCell = document.querySelector(`td[data-i="${i}"][data-j="${j}"]`)
+    elCell.classList.add('hidden-cell')
+
+    gBoard[i][j].isMarked = !gBoard[i][j].isMarked
+    renderCell(i, j)
 }
 
 function checkGameOver() {
@@ -115,4 +129,10 @@ function getNegMines(coord, board) {
     }
 
     return res
-} 
+}
+
+function getCellContent(i, j) {
+    if (gBoard[i][j].isMarked) return MARK
+    if (gBoard[i][j].isMine) return MINE
+    return gBoard[i][j].minesAroundCount
+}
