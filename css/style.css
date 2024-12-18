@@ -7,6 +7,7 @@
 :root {
     --bg-clr: #bdbdbd;
     --hint-clr: yellow;
+    --bg-edit-btn: #00a9e9;
 }
 
 section.game-container {
@@ -47,6 +48,8 @@ footer {
 
 .btn {
     cursor: pointer;
+    padding: .5rem;
+    border-radius: 10%;
 }
 
 .highlight-hint {
@@ -57,4 +60,8 @@ footer {
     width: 50%;
     margin: auto;
     border: 2px solid black;
+}
+
+.edit-mode {
+    background-color: var(--bg-edit-btn);
 }

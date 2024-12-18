@@ -23,8 +23,8 @@ function onInit(level = 4) {
     setLeaderboard()
     gBoard = buildBoard()
     renderBoard(gBoard)
-
     getStorage()
+
     // setStorage()
     // populateLeaderboardForTesting()
 }
@@ -56,11 +56,12 @@ function setLevel(level) {
 
 function setGame() {
     gGame = {
-        isOn: true,
+        isOn: false,
         shownCount: 0,
         markedCount: 0,
         secsPassed: 0,
-        LIVES: 2
+        LIVES: 2,
+        isEditorMode: false,
     }
     renderStats()
     document.querySelector('.game-state').innerHTML = ONGOING
@@ -143,9 +144,8 @@ function renderCell(i, j) {
 }
 
 function onCellClicked(elCell, i, j) {
-    if (!gGame.isOn) return
-
-    if (gGame.shownCount === 0) {
+    if (!gGame.isOn && !gGame.isEditorMode) {
+        gGame.isOn = true
         gFirstMoveCoord = { i, j }
         setMines(gBoard)
         startTimer()
@@ -153,7 +153,11 @@ function onCellClicked(elCell, i, j) {
         peekAround({ i, j })
         gGame.isHint = false
         return
-    }
+    } else if (gGame.isEditorMode) {
+        onEditorMode(elCell, i, j)
+        return
+    } else if (!gGame.isOn) return
+
 
     showCell(i, j)
 
@@ -206,13 +210,14 @@ function onCellMarked(i, j) {
 }
 
 function checkGameOver(i, j) {
+    if (!gGame.isOn) return
+
     if (gBoard[i][j].isMine && gBoard[i][j].isShown) {
         gGame.LIVES--
         renderStats()
         if (gGame.LIVES <= 0) {
             gGame.isOn = false
             clearInterval(gTimer.interval)
-
             onLose()
         }
         return
@@ -320,7 +325,7 @@ function onReset(level) {
 function onHintClicked(elHint) {
     // TODO: use Model instead of DOM
     if (elHint.classList.contains('highlight-hint')) return
-    if (!gGame.shownCount) return // disable hints on first turn 
+    if (!gGame.isOn) return // disable hints on first turn 
 
     gGame.isHint = true
     elHint.classList.add('highlight-hint')
@@ -379,7 +384,7 @@ function renderLeaderboard() {
         </tr>`
     }
 
-    var elLeaderboard = document.querySelector('.leaderboard').innerHTML = strHTML
+    document.querySelector('.leaderboard').innerHTML = strHTML
 }
 
 function populateLeaderboardForTesting() {
@@ -391,7 +396,16 @@ function populateLeaderboardForTesting() {
         ],
         medium: [{ username: 'john', score: 3 }],
         expert: [{ username: 'john', score: 3 }],
-        
+
     }
     setStorage()
+}
+
+function onEditorMode(elCell, i, j) {
+    gBoard[i][j].isMine = true
+}
+
+function onEditorClick(elBtn) {
+    gGame.isEditorMode = !gGame.isEditorMode
+    elBtn.classList.toggle('edit-mode')
 }
