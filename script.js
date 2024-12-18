@@ -9,6 +9,9 @@ var gFirstMoveCoord
 
 var MINE = '<img src="img/mine.png">'
 var MARK = '<img src="img/mark.png">'
+var LOSE = '🤯'
+var WIN = '😎'
+var ONGOING = '😄'
 
 function onInit(level = 4) {
     setLevel(level)
@@ -48,6 +51,7 @@ function setGame() {
         LIVES: 2
     }
     renderStats()
+    document.querySelector('.game-state').innerHTML = ONGOING
 }
 
 function buildBoard() {
@@ -70,17 +74,17 @@ function setMines(board) {
 }
 
 function placeMines(board) {
-    // board[0][0].isMine = true
-    // board[2][2].isMine = true
+    board[0][0].isMine = true
+    board[2][2].isMine = true
 
-    var emptyCells = getEmptyCells(gLevel.SIZE, board)
-    for (var mineCnt = gLevel.MINES; mineCnt>0; mineCnt--) {
-        var rndIdx = getRandomInt(0, emptyCells.length)
-        console.log('rndIdx:', rndIdx)
-        var cellCoord = emptyCells.splice(rndIdx, 1)[0]
-        console.log('cellCoord:', cellCoord)
-        board[cellCoord.i][cellCoord.j].isMine = true
-    }
+    // var emptyCells = getEmptyCells(gLevel.SIZE, board)
+    // for (var mineCnt = gLevel.MINES; mineCnt > 0; mineCnt--) {
+    //     var rndIdx = getRandomInt(0, emptyCells.length)
+    //     console.log('rndIdx:', rndIdx)
+    //     var cellCoord = emptyCells.splice(rndIdx, 1)[0]
+    //     console.log('cellCoord:', cellCoord)
+    //     board[cellCoord.i][cellCoord.j].isMine = true
+    // }
 }
 
 function setMinesNegsCount(board) {
@@ -123,10 +127,10 @@ function renderCell(i, j) {
 function onCellClicked(elCell, i, j) {
     if (!gGame.isOn) return
     if (gGame.shownCount === 0) {
-        gFirstMoveCoord = {i, j}
+        gFirstMoveCoord = { i, j }
         setMines(gBoard)
     }
-    
+
     showCell(i, j)
 
     // mine or last cell?
@@ -171,7 +175,7 @@ function checkGameOver(i, j) {
     var nonMineShownCnt = 0
     for (var i = 0; i < gLevel.SIZE; i++) {
         for (var j = 0; j < gLevel.SIZE; j++) {
-            if (gBoard[i][j].isMine && (gBoard[i][j].isMarked || gBoard[i][j])) markedMinesCnt++
+            if (gBoard[i][j].isMine && (gBoard[i][j].isMarked || gBoard[i][j].isShown)) markedMinesCnt++
             if (!gBoard[i][j].isMine && gBoard[i][j].isShown) nonMineShownCnt++
         }
     }
@@ -205,6 +209,7 @@ function getCellContent(i, j) {
 
 function onLose() {
     console.log('you lost')
+    document.querySelector('.game-state').innerHTML = LOSE
     // Reveal all mines
     for (var i = 0; i < gLevel.SIZE; i++) {
         for (var j = 0; j < gLevel.SIZE; j++) {
@@ -215,7 +220,8 @@ function onLose() {
 }
 
 function onWin() {
-    alert('hurray!')
+    console.log('you won')
+    document.querySelector('.game-state').innerHTML = WIN
 }
 
 function onChangeLevel(level) {
@@ -246,4 +252,9 @@ function showCell(i, j) {
 
 function renderStats() {
     document.querySelector('.lives-count').innerHTML = gGame.LIVES
+}
+
+function onReset() {
+    var level = gLevel.SIZE
+    onInit(level)
 }

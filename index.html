@@ -12,6 +12,10 @@
     </header>
 
     <main>
+        <section class="reset-container">
+            <button onclick="onReset()" class="btn game-state"></button>
+        </section>
+
         <section class="game-container"></section>
 
         <section class="stats-container">
@@ -20,11 +24,11 @@
 
         <section class="level-container">
             <h2>Choose level:</h2>
-            <input onclick="onChangeLevel(4)" type="radio" name="difficulty" checked>
+            <input onclick="onChangeLevel(4)" type="radio" name="level" checked>
             <label for="easy">Beginner</label>
-            <input onclick="onChangeLevel(8)" type="radio" name="difficulty">
+            <input onclick="onChangeLevel(8)" type="radio" name="level">
             <label for="medium">Medium</label>
-            <input onclick="onChangeLevel(12)" type="radio" name="difficulty">
+            <input onclick="onChangeLevel(12)" type="radio" name="level">
             <label for="hard">Expert</label>
         </section>
     </main>
