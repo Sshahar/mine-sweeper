@@ -8,6 +8,9 @@ var gGame
 var gFirstMoveCoord
 var gTimer
 var gLeaderboard
+var gMoveQueue
+var gBackupBoard
+var gIsUndo
 
 var MINE = '<img src="img/mine.png">'
 var MARK = '<img src="img/mark.png">'
@@ -15,15 +18,19 @@ var LOSE = '🤯'
 var WIN = '😎'
 var ONGOING = '😄'
 
-function onInit(level = 4) {
+function onInit(level = 4, isUndo) {
     setLevel(level)
     setGame()
-    setTimer()
     setLeaderboard()
     gBoard = buildBoard()
     renderBoard(gBoard)
     getStorage()
 
+    if (!isUndo) {
+        setUndo()
+        setTimer()
+        gIsUndo = false
+    }
     // setStorage()
     // populateLeaderboardForTesting()
 }
@@ -67,9 +74,11 @@ function setGame() {
 }
 
 function setTimer() {
-    gTimer = {
+    gTimer = {}
+}
 
-    }
+function setUndo() {
+    gMoveQueue = []
 }
 
 function buildBoard() {
@@ -122,7 +131,7 @@ function renderBoard(board) {
         for (var j = 0; j < gLevel.SIZE; j++) {
             var cellContent = getCellContent(i, j)
             var classNames = board[i][j].isShown ? '' : 'hidden-cell'
-            strHTML += `<td class="${classNames}" onclick="onCellClicked(this, ${i}, ${j})" ` +
+            strHTML += `<td class="${classNames}" onclick="onCellClicked(${i}, ${j})" ` +
                 `oncontextmenu="onCellMarked(${i}, ${j})"` +
                 `data-i="${i}" data-j="${j}">` +
                 `${cellContent}` +
@@ -142,21 +151,23 @@ function renderCell(i, j) {
     elCell.classList.remove('hidden-cell')
 }
 
-function onCellClicked(elCell, i, j) {
-    if (!gGame.isOn && !gGame.isEditorMode) {
+function onCellClicked(i, j) {
+    if (!gGame.isOn && !gGame.isEditorMode && !gGame.shownCount) {
         gGame.isOn = true
         gFirstMoveCoord = { i, j }
         setMines(gBoard)
-        startTimer()
+        if (!gIsUndo) startTimer()
+        gBackupBoard = _.cloneDeep(gBoard)
     } else if (gGame.isHint) {
         peekAround({ i, j })
         gGame.isHint = false
         return
     } else if (gGame.isEditorMode) {
-        onEditorMode(elCell, i, j)
+        onEditorMode(i, j)
         return
     } else if (!gGame.isOn) return
 
+    gMoveQueue.push({ i, j })
 
     showCell(i, j)
 
@@ -360,7 +371,7 @@ function addLeaderboard() {
     var score = +document.querySelector('.game-time').innerHTML
 
     if (!username) return // don't add user with no name to leaderboard
-    
+
     gLeaderboard[`${gLevel.NAME}`].push({ username, score })
     localStorage.setItem(`${gLevel.NAME}Leaderboard`, JSON.stringify(`gLeaderboard.${gLevel.NAME}`))
 }
@@ -402,11 +413,33 @@ function populateLeaderboardForTesting() {
     setStorage()
 }
 
-function onEditorMode(elCell, i, j) {
+function onEditorMode(i, j) {
     gBoard[i][j].isMine = true
 }
 
 function onEditorClick(elBtn) {
     gGame.isEditorMode = !gGame.isEditorMode
     elBtn.classList.toggle('edit-mode')
+}
+
+function onUndo() {
+    gIsUndo = true
+    // restores board state to last move
+    onInit(gLevel.SIZE, true)
+    
+    gBoard = _.cloneDeep(gBackupBoard)
+    renderBoard(gBoard)
+
+    if (gMoveQueue.length === 1) gGame.isOn = false
+
+    var moves = _.cloneDeep(gMoveQueue)
+    moves.pop()
+    setUndo()
+
+    for (var i = 0; i < moves.length; i++) {
+        var coord = moves[i]
+        onCellClicked(coord.i, coord.j)
+    }
+
+    gIsUndo = false
 }
