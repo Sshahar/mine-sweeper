@@ -8,7 +8,7 @@
     --bg-clr: #bdbdbd;
 }
 
-div.game-container {
+section.game-container {
     background-color: var(--bg-clr);
     height: 50vh;
     width: min(750px, 50%);

@@ -111,7 +111,7 @@ function renderBoard(board) {
     }
 
     strHTML += '</tbody></table>'
-    document.querySelector('div.game-container').innerHTML = strHTML
+    document.querySelector('section.game-container').innerHTML = strHTML
 }
 
 function renderCell(i, j) {
