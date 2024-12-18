@@ -46,7 +46,7 @@ function getEmptyCells(SIZE, board) {
     for (var i = 0; i < SIZE; i++) {
         for (var j = 0; j < SIZE; j++) {
             if (gFirstMoveCoord.i === i && gFirstMoveCoord.j === j) continue
-            if (!board[i][j].isMine) emptyCells.push({ i, j })
+            if (!board[i][j].isMine && !board[i][j].isShown) emptyCells.push({ i, j })
         }
     }
 

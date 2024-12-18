@@ -12,6 +12,7 @@ var gIsUndo
 
 var MINE = '<img src="img/mine.png">'
 var MARK = '<img src="img/mark.png">'
+var SAFE = '🏳️'
 var LOSE = '🤯'
 var WIN = '😎'
 var ONGOING = '😄'
@@ -66,6 +67,7 @@ function setGame() {
         secsPassed: 0,
         LIVES: 2,
         isEditorMode: false,
+        safeClickCount: 3,
     }
     renderStats()
     document.querySelector('.game-state').innerHTML = ONGOING
@@ -86,7 +88,7 @@ function buildBoard() {
     for (var i = 0; i < gLevel.SIZE; i++) {
         board[i] = []
         for (var j = 0; j < gLevel.SIZE; j++) {
-            board[i][j] = { minesAroundCount: 0, isShown: false, isMine: false, isMarked: false }
+            board[i][j] = { minesAroundCount: 0, isShown: false, isMine: false, isMarked: false, iaSafe: false }
         }
     }
 
@@ -143,7 +145,7 @@ function renderBoard(board) {
 }
 
 function renderCell(i, j) {
-    if (!gBoard[i][j].isShown && !gBoard[i][j].isMarked && !gGame.isHint) return
+    if (!gBoard[i][j].isShown && !gBoard[i][j].isMarked && !gGame.isHint && !gBoard[i][j].isSafe) return
     var elCell = document.querySelector(`td[data-i="${i}"][data-j="${j}"]`)
     elCell.innerHTML = getCellContent(i, j)
     elCell.classList.remove('hidden-cell')
@@ -206,7 +208,6 @@ function onCellMarked(i, j) {
     if (!gGame.isOn) return
 
     gGame.markedCount += gBoard[i][j].isMarked ? -1 : 1
-    console.log('gGame.markedCount:', gGame.markedCount)
 
     var elCell = getElCell({ i, j })
     elCell.classList.add('hidden-cell')
@@ -248,10 +249,6 @@ function checkGameOver(i, j) {
     }
 }
 
-function expandShown(board, elCell, i, j) {
-
-}
-
 function getNegMines(coord, board) {
     var res = []
     var negs = getNegs(coord)
@@ -267,6 +264,7 @@ function getNegMines(coord, board) {
 function getCellContent(i, j) {
     if (gBoard[i][j].isMarked) return MARK
     if (gBoard[i][j].isMine) return MINE
+    if (gBoard[i][j].isSafe) return SAFE
     return gBoard[i][j].minesAroundCount
 }
 
@@ -426,7 +424,7 @@ function onUndo() {
     gIsUndo = true
     // restores board state to last move
     onInit(gLevel.SIZE, true)
-    
+
     gBoard = _.cloneDeep(gBackupBoard)
     renderBoard(gBoard)
 
@@ -449,4 +447,28 @@ function onUndo() {
 
 function onDarkModeToggle() {
     document.body.classList.toggle('dark-mode')
+}
+
+function onSafeClick() {
+    if (!gGame.isOn) return
+    if (gGame.safeClickCount <= 0) return
+    --gGame.safeClickCount
+
+    // Get random cell
+    var emptyCells = getEmptyCells(gLevel.SIZE, gBoard)
+    var rndIdx = getRandomInt(0, emptyCells.length)
+    var cell = emptyCells[rndIdx]
+
+    gBoard[cell.i][cell.j].isSafe = true
+    renderCell(cell.i, cell.j)
+
+    setTimeout(() => {
+        gBoard[cell.i][cell.j].isSafe = false
+        renderCell(cell.i, cell.j)
+        
+        var elCell = getElCell(cell)
+        elCell.classList.add('hidden-cell')
+    }, 1000, cell)
+
+    document.querySelector('.safe-click-count').innerHTML = gGame.safeClickCount
 }
