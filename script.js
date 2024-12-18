@@ -119,13 +119,7 @@ function renderCell(i, j) {
 }
 
 function onCellClicked(elCell, i, j) {
-    if (gBoard[i][j].isShown) return
-
-    if (gBoard[i][j].isMarked) gGame.markedCount--
-    gGame.shownCount++
-
-    gBoard[i][j].isMarked = false
-    gBoard[i][j].isShown = true
+    showCell(i, j)
 
     // mine or last cell?
     checkGameOver(i, j)
@@ -134,8 +128,6 @@ function onCellClicked(elCell, i, j) {
     if (!gBoard[i][j].isMine && gBoard[i][j].minesAroundCount === 0) {
         showNegs(i, j)
     }
-
-    renderCell(i, j)
 }
 
 function onCellMarked(i, j) {
@@ -161,7 +153,15 @@ function checkGameOver(i, j) {
 
     // are all mines marked ?
     // are all non-mine cells shown?
-    if (gGame.shownCount + gGame.markedCount === Math.pow(gLevel.SIZE, 2)) {
+    var markedMinesCnt = 0
+    var nonMineShownCnt = 0
+    for (var i = 0; i < gLevel.SIZE; i++) {
+        for (var j = 0; j < gLevel.SIZE; j++) {
+            if (gBoard[i][j].isMine && gBoard[i][j].isMarked) markedMinesCnt++
+            if (!gBoard[i][j].isMine && gBoard[i][j].isShown) nonMineShownCnt++
+        }
+    }
+    if (markedMinesCnt + nonMineShownCnt === Math.pow(gLevel.SIZE, 2)) {
         gGame.isOn = false
         onWin()
     }
@@ -212,9 +212,16 @@ function showNegs(i, j) {
 
     for (var n=0; n<negs.length; n++) {
         var coord = negs[n]
-        gBoard[coord.i][coord.j].isShown = true
-        gBoard[coord.i][coord.j].isMarked = false
-
-        renderCell(coord.i, coord.j)
+        showCell(coord.i, coord.j)
     }
+}
+
+function showCell(i, j) {
+    if (gBoard[i][j].isShown) return
+    if (gBoard[i][j].isMarked) gGame.markedCount--
+    
+    gGame.shownCount++
+    gBoard[i][j].isMarked = false
+    gBoard[i][j].isShown = true
+    renderCell(i, j)
 }
