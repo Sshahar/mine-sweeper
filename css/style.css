@@ -17,20 +17,6 @@ body {
     --bg-clr-dark-mode: black;
 }
 
-.dark-mode {
-    --bg-clr: #747474;
-}
-
-section.game-container {
-    background-color: var(--bg-clr);
-    width: min(750px, 50%);
-    margin: auto;
-}
-
-main {
-    min-height: 90vh;
-}
-
 table.game-board {
     margin: auto;
     border-collapse: collapse;
@@ -48,21 +34,6 @@ table.game-board {
     opacity: 0;
 }
 
-header {
-    height: 5vh;
-}
-
-footer {
-    height: 5vh; 
-    font-size: 2rem;
-}
-
-.btn {
-    cursor: pointer;
-    padding: .5rem;
-    border-radius: 10%;
-}
-
 .highlight-hint {
     background-color: var(--hint-clr);
 }
@@ -75,21 +46,4 @@ footer {
 
 .edit-mode {
     background-color: var(--bg-edit-btn);
-}
-
-.btn-safe-click {
-    background-color: var(--bg-safe-click);
-}
-
-.top-container {
-    display: flex;
-    justify-content: space-evenly;
-}
-
-.btn-mine-exterminator {
-    border: none;
-}
-
-button.btn-mega-hint {
-    background-color: var(--bg-mega-hint);
 }

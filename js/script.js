@@ -8,8 +8,7 @@ var gGame
 var gFirstMoveCoord
 var gTimer
 var gLeaderboard
-var gMoveQueue
-var gBackupBoard
+var gUndo
 var gIsUndo
 var gMegaHint
 
@@ -93,7 +92,8 @@ function setTimer() {
 }
 
 function setUndo() {
-    gMoveQueue = []
+    gUndo = {}
+    gUndo.moveQueue = []
 }
 
 function setMegaHint() {
@@ -180,7 +180,7 @@ function onCellClicked(i, j) {
         gFirstMoveCoord = { i, j }
         setMines(gBoard)
         if (!gIsUndo) startTimer()
-        gBackupBoard = _.cloneDeep(gBoard)
+        gUndo.backupBoard = _.cloneDeep(gBoard)
     } else if (gGame.isHint) {
         revealHint({ i, j })
         gGame.isHint = false
@@ -194,7 +194,7 @@ function onCellClicked(i, j) {
         return
     }
 
-    gMoveQueue.push({ i, j })
+    gUndo.moveQueue.push({ i, j })
 
     showCell(i, j)
 
@@ -456,15 +456,15 @@ function onUndo() {
     // restores board state to last move
     onInit(gLevel.SIZE, true)
 
-    gBoard = _.cloneDeep(gBackupBoard)
+    gBoard = _.cloneDeep(gUndo.backupBoard)
     renderBoard(gBoard)
 
-    if (gMoveQueue.length === 1) {
+    if (gUndo.moveQueue.length === 1) {
         onReset(gLevel.SIZE)
         return
     }
 
-    var moves = _.cloneDeep(gMoveQueue)
+    var moves = _.cloneDeep(gUndo.moveQueue)
     moves.pop()
     setUndo()
 
@@ -549,7 +549,7 @@ function handleMegaHint(i, j) {
         gMegaHint.coord1 = { i, j }
     } else if (gMegaHint.state === 1) { // select bot right corner
         gMegaHint.coord2 = { i, j }
-        
+
         // show area for a few seconds
         var cells = getCellsInArea(gMegaHint.coord1, gMegaHint.coord2)
         showCells(cells, 2000)

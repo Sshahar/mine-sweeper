@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mine Sweeper</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+    <link rel="stylesheet" href="css/input.css">
+    <link rel="stylesheet" href="css/layout.css">
 </head>
 
 <body onload="onInit()" oncontextmenu="return false">
@@ -15,14 +18,18 @@
 
     <main>
         <section class="top-container">
-            <button onclick="onReset()" class="btn game-state"></button>
-
             <button class="btn btn-dark-mode" onclick="onDarkModeToggle()">Dark mode</button>
 
             <div>
                 <button class="btn btn-safe-click" onclick="onSafeClick()">Safe Click</button>
                 <div><span class="safe-click-count">3</span> clicks available</div>
             </div>
+
+            <section class="undo-container">
+                <button class="btn btn-undo" onclick="onUndo()">Undo</button>
+            </section>
+
+            <button onclick="onReset()" class="btn game-state"></button>
 
             <div>
                 <button class="btn btn-mine-exterminator" onclick="onMineExterminator()">
@@ -80,18 +87,14 @@
         <section class="editor-container">
             <button class="btn btn-editor" onclick="onEditorClick(this)">Edit</button>
         </section>
-
-        <section class="undo-container">
-            <button class="btn btn-undo" onclick="onUndo()">Undo</button>
-        </section>
     </main>
 
     <footer>Shahar's game</footer>
 
-    <script src="lodash.js"></script>
-    <script src="script.js"></script>
-    <script src="util.js"></script>
-    <script src="mat-util.js"></script>
+    <script src="js/lodash.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/util.js"></script>
+    <script src="js/mat-util.js"></script>
 </body>
 
 </html>

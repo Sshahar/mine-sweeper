@@ -1,0 +1,23 @@
+main {
+    min-height: 90vh;
+}
+
+header {
+    height: 5vh;
+}
+
+footer {
+    height: 5vh; 
+    font-size: 2rem;
+}
+
+section.game-container {
+    background-color: var(--bg-clr);
+    width: min(750px, 50%);
+    margin: auto;
+}
+
+.top-container {
+    display: flex;
+    justify-content: space-evenly;
+}
