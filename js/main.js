@@ -3,14 +3,9 @@
 // TODO: fix UNDO reset safeClickCount: 3, canMineExterminator: true,
 
 var gBoard
-var gLevel
 var gGame
 var gFirstMoveCoord
 var gTimer
-var gLeaderboard
-var gUndo
-var gIsUndo
-var gMegaHint
 
 var MINE = '<img src="img/mine.png">'
 var MARK = '<img src="img/mark.png">'
@@ -32,44 +27,13 @@ function onInit(level = 4, isUndo) {
         setUndo()
         setTimer()
         setMegaHint()
-        gIsUndo = false
+        gUndo.isActive = false
     }
     // setStorage()
     // populateLeaderboardForTesting()
 }
 
-function setLevel(level) {
-    switch (level) {
-        case 4:
-            gLevel = {
-                NAME: 'easy',
-                SIZE: 4,
-                MINES: 2
-            }
-            break
-        case 8:
-            gLevel = {
-                NAME: 'medium',
-                SIZE: 8,
-                MINES: 14
-            }
-            break
-        case 12:
-            gLevel = {
-                NAME: 'expert',
-                SIZE: 12,
-                MINES: 32
-            }
-    }
-}
 
-function setHints() {
-    var elHints = document.querySelectorAll('.highlight-hint')
-
-    for (var i = 0; i < elHints.length; i++) {
-        elHints[i].classList.remove('highlight-hint')
-    }
-}
 
 function setGame() {
     gGame = {
@@ -94,14 +58,6 @@ function setTimer() {
 function setUndo() {
     gUndo = {}
     gUndo.moveQueue = []
-}
-
-function setMegaHint() {
-    gMegaHint = {
-        canMegaHint: true,
-        state: -1,
-        isMegaHint: false,
-    }
 }
 
 function buildBoard() {
@@ -179,7 +135,7 @@ function onCellClicked(i, j) {
         gGame.isOn = true
         gFirstMoveCoord = { i, j }
         setMines(gBoard)
-        if (!gIsUndo) startTimer()
+        if (!gUndo.isActive) startTimer()
         gUndo.backupBoard = _.cloneDeep(gBoard)
     } else if (gGame.isHint) {
         revealHint({ i, j })
@@ -205,26 +161,6 @@ function onCellClicked(i, j) {
 
     // mine or last cell?
     checkGameOver(i, j)
-}
-
-function revealHint(coord, revealMs = 1000) {
-    var peekCells = [coord].concat(getNegs(coord))
-
-    for (var n = 0; n < peekCells.length; n++) {
-        var cell = peekCells[n]
-        gBoard[cell.i][cell.j].isMarked = false
-        renderCell(cell.i, cell.j)
-    }
-    setTimeout(hideCells, revealMs, peekCells)
-}
-
-function hideCells(cells) {
-    for (var n = 0; n < cells.length; n++) {
-        var cell = cells[n]
-        var elCell = getElCell(cell)
-        if (!gBoard[cell.i][cell.j].isShown) elCell.classList.add('hidden-cell')
-    }
-    gGame.isHint = false
 }
 
 function getElCell(coord) {
@@ -320,10 +256,6 @@ function onWin() {
     renderLeaderboard()
 }
 
-function onChangeLevel(level) {
-    onReset(level)
-    renderLeaderboard()
-}
 
 function showNegs(i, j) {
     var negs = getNegs({ i, j })
@@ -353,218 +285,10 @@ function renderStats() {
 
 function onReset(level) {
     level = level ? level : gLevel.SIZE
-    gIsUndo = false
+    gUndo.isActive = false
 
     clearInterval(gTimer.interval)
     document.querySelector('.game-time').innerHTML = 0
 
     onInit(level)
-}
-
-function onHintClicked(elHint) {
-    // TODO: use Model instead of DOM
-    if (elHint.classList.contains('highlight-hint')) return
-    if (!gGame.isOn) return // disable hints on first turn 
-
-    gGame.isHint = true
-    elHint.classList.add('highlight-hint')
-}
-
-function setStorage() {
-    if (typeof (Storage) === "undefined") return
-
-    localStorage.setItem('easyLeaderboard', JSON.stringify(gLeaderboard.easy))
-    localStorage.setItem('mediumLeaderboard', JSON.stringify(gLeaderboard.medium))
-    localStorage.setItem('expertLeaderboard', JSON.stringify(gLeaderboard.expert))
-}
-
-function getStorage() {
-    if (typeof (Storage) === "undefined") return
-    var easy = typeof localStorage.easyLeaderboard === 'undefined' ? [] : JSON.parse(localStorage.easyLeaderboard)
-    var medium = typeof localStorage.mediumLeaderboard === 'undefined' ? [] : JSON.parse(localStorage.mediumLeaderboard)
-    var expert = typeof localStorage.expertLeaderboard === 'undefined' ? [] : JSON.parse(localStorage.expertLeaderboard)
-    gLeaderboard.easy = easy
-    gLeaderboard.medium = medium
-    gLeaderboard.expert = expert
-}
-
-function setLeaderboard() {
-    gLeaderboard = {}
-    getStorage()
-    renderLeaderboard()
-}
-
-function addLeaderboard() {
-    var username = document.querySelector('.username').value
-    var score = +document.querySelector('.game-time').innerHTML
-
-    if (!username) return // don't add user with no name to leaderboard
-
-    gLeaderboard[`${gLevel.NAME}`].push({ username, score })
-    localStorage.setItem(`${gLevel.NAME}Leaderboard`, JSON.stringify(`gLeaderboard.${gLevel.NAME}`))
-}
-
-function renderLeaderboard() {
-    var strHTML = ''
-
-    // sort leaderboard by score
-    var leaderboard = gLeaderboard[`${gLevel.NAME}`]
-    leaderboard.sort((a, b) => {
-        return a.score - b.score
-    })
-
-
-    for (var i = 0; i < leaderboard.length; i++) {
-        var name = leaderboard[i].username
-        var score = leaderboard[i].score
-
-        strHTML += `<tr>
-        <td>${name}</td>
-        <td>${score}</td>
-        </tr>`
-    }
-
-    document.querySelector('.leaderboard').innerHTML = strHTML
-}
-
-function populateLeaderboardForTesting() {
-    gLeaderboard = {
-        easy: [
-            { username: 'john', score: 3 },
-            { username: 'joe', score: 4.5 },
-
-        ],
-        medium: [{ username: 'john', score: 3 }],
-        expert: [{ username: 'john', score: 3 }],
-
-    }
-    setStorage()
-}
-
-function onEditorMode(i, j) {
-    gBoard[i][j].isMine = true
-}
-
-function onEditorClick(elBtn) {
-    gGame.isEditorMode = !gGame.isEditorMode
-    elBtn.classList.toggle('edit-mode')
-}
-
-function onUndo() {
-    if (!gGame.isOn) return
-    gIsUndo = true
-    // restores board state to last move
-    onInit(gLevel.SIZE, true)
-
-    gBoard = _.cloneDeep(gUndo.backupBoard)
-    renderBoard(gBoard)
-
-    if (gUndo.moveQueue.length === 1) {
-        onReset(gLevel.SIZE)
-        return
-    }
-
-    var moves = _.cloneDeep(gUndo.moveQueue)
-    moves.pop()
-    setUndo()
-
-    for (var i = 0; i < moves.length; i++) {
-        var coord = moves[i]
-        onCellClicked(coord.i, coord.j)
-    }
-
-    gIsUndo = false
-}
-
-function onDarkModeToggle() {
-    document.body.classList.toggle('dark-mode')
-}
-
-function onSafeClick() {
-    if (!gGame.isOn) return
-    if (gGame.safeClickCount <= 0) return
-    --gGame.safeClickCount
-
-    // Get random cell
-    var emptyCells = getEmptyCells(gLevel.SIZE, gBoard)
-    var rndIdx = getRandomInt(0, emptyCells.length)
-    var cell = emptyCells[rndIdx]
-
-    gBoard[cell.i][cell.j].isSafe = true
-    renderCell(cell.i, cell.j)
-
-    setTimeout(() => {
-        gBoard[cell.i][cell.j].isSafe = false
-        renderCell(cell.i, cell.j)
-
-        var elCell = getElCell(cell)
-        if (!gBoard[cell.i][cell.j].isShown) elCell.classList.add('hidden-cell')
-    }, 1000, cell)
-
-    document.querySelector('.safe-click-count').innerHTML = gGame.safeClickCount
-}
-
-function getMineCells() {
-    var cells = []
-
-    for (var i = 0; i < gLevel.SIZE; i++) {
-        for (var j = 0; j < gLevel.SIZE; j++) {
-            if (gBoard[i][j].isMine) cells.push({ i, j })
-        }
-    }
-
-    return cells
-}
-
-function onMineExterminator() {
-    if (!gGame.isOn) return
-    if (!gGame.canMineExterminator) return
-
-    var mineCells = getMineCells()
-
-    for (var totalExterms = 3; totalExterms > 0 && mineCells.length; totalExterms--) {
-        var rndIdx = getRandomInt(0, mineCells.length)
-        var cell = mineCells.splice(rndIdx, 1)[0]
-
-
-        gBoard[cell.i][cell.j].isMine = false
-    }
-
-    setMinesNegsCount(gBoard)
-    renderBoard(gBoard)
-
-    gGame.canMineExterminator = false
-}
-
-function onMegaHint() {
-    if (!gMegaHint.canMegaHint) return
-    gMegaHint.state = 0
-    gMegaHint.canMegaHint = false
-    gMegaHint.isMegaHint = true
-}
-
-
-function handleMegaHint(i, j) {
-    if (gMegaHint.state === 0) { // select top left corner
-        gMegaHint.coord1 = { i, j }
-    } else if (gMegaHint.state === 1) { // select bot right corner
-        gMegaHint.coord2 = { i, j }
-
-        // show area for a few seconds
-        var cells = getCellsInArea(gMegaHint.coord1, gMegaHint.coord2)
-        showCells(cells, 2000)
-        gMegaHint.isMegaHint = false
-    }
-
-    gMegaHint.state++
-}
-
-function showCells(cells, revealMs) {
-    gGame.isHint = true
-    for (var n = 0; n < cells.length; n++) {
-        var cell = cells[n]
-        gBoard[cell.i][cell.j].isMarked = false
-        renderCell(cell.i, cell.j)
-    }
-    setTimeout(hideCells, revealMs, cells)
 }
