@@ -187,8 +187,8 @@ function checkGameOver(i, j) {
             gGame.isOn = false
             clearInterval(gTimer.interval)
             onLose()
+            return
         }
-        return
     }
 
     // are all mines marked ?
