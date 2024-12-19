@@ -4,18 +4,9 @@
     background: var(--bg-clr);
 }
 
-body {
-    background-color: var(--bg-clr-dark-mode);
-}
-
 :root {
     --bg-clr: #bdbdbd;
     --hint-clr: yellow;
-    --bg-edit-btn: #00a9e9;
-    --bg-safe-click: #00a9e9;
-    --bg-mega-hint: #00a9e9;
-    --bg-clr-dark-mode: black;
-    --bg-mega-hint: #c55a11;
 }
 
 table.game-board {
@@ -43,8 +34,4 @@ table.game-board {
     width: 50%;
     margin: auto;
     border: 2px solid black;
-}
-
-.edit-mode {
-    background-color: var(--bg-edit-btn);
 }

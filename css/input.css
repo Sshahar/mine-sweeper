@@ -1,9 +1,18 @@
+:root {
+    --bg-edit-btn: #00a9e9;
+    --bg-safe-click: #00a9e9;
+    --bg-clr-dark-mode: black;
+    --bg-mega-hint: #c55a11;
+    --bg-btn-off: #bdbdbd;
+    --bg-btn-on: #00a9e9;
+    --bg-btn-dark-mode: 
+}
+
 button.btn {
     cursor: pointer;
     padding: .5rem;
     border-radius: 10%;
 }
-
 
 button.btn-safe-click {
     background-color: var(--bg-safe-click);
@@ -14,5 +23,17 @@ button.btn-mine-exterminator {
 }
 
 button.btn-mega-hint {
-    background-color: var(--bg-mega-hint);
+    background-color: var(--bg-btn-on);
+}
+
+button.edit-mode {
+    background-color: var(--bg-edit-btn);
+}
+
+button.btn-on {
+    background-color: var(--bg-btn-on);
+}
+
+button.btn-off {
+    background-color: var(--bg-btn-off);
 }
