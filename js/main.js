@@ -306,6 +306,7 @@ function startGame(i, j) {
         elBtns[i].classList.add('btn-on')
     }
 
-    debugger
     document.querySelector('.btn-editor').classList.remove('btn-on')
+    document.querySelector('.btn-editor').classList.add('btn-off')
+
 }
