@@ -39,7 +39,6 @@ function getFuncName() {
     return getFuncName.caller.name
 }
 
-
 function getEmptyCells(SIZE, board) {
     var emptyCells = []
 
@@ -51,4 +50,19 @@ function getEmptyCells(SIZE, board) {
     }
 
     return emptyCells
+}
+
+function getElCell(coord) {
+    return document.querySelector(`td[data-i="${coord.i}"][data-j="${coord.j}"]`)
+}
+
+function getCellCoord(elCell) {
+    return {i: +elCell.getAttribute('data-i'), j: +elCell.getAttribute('data-j')}
+}
+
+function getCellContent(i, j) {
+    if (gBoard[i][j].isMarked) return MARK
+    if (gBoard[i][j].isMine) return MINE
+    if (gBoard[i][j].isSafe) return SAFE
+    return gBoard[i][j].minesAroundCount
 }

@@ -216,13 +216,6 @@ function getNegMines(coord, board) {
     return res
 }
 
-function getCellContent(i, j) {
-    if (gBoard[i][j].isMarked) return MARK
-    if (gBoard[i][j].isMine) return MINE
-    if (gBoard[i][j].isSafe) return SAFE
-    return gBoard[i][j].minesAroundCount
-}
-
 function onLose() {
     console.log('you lost')
     document.querySelector('.game-state').innerHTML = LOSE
@@ -285,14 +278,6 @@ function onReset(level) {
 
 function onMouseMove(event) {
     updateAreaSelect(event.target) // mega-hint handler
-}
-
-function getElCell(coord) {
-    return document.querySelector(`td[data-i="${coord.i}"][data-j="${coord.j}"]`)
-}
-
-function getCellCoord(elCell) {
-    return {i: +elCell.getAttribute('data-i'), j: +elCell.getAttribute('data-j')}
 }
 
 function startGame(i, j) {
