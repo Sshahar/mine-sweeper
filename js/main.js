@@ -5,7 +5,7 @@
 var gBoard
 var gGame
 var gFirstMoveCoord
-var gTimer
+
 
 var MINE = '<img src="img/mine.png">'
 var MARK = '<img src="img/mark.png">'
@@ -51,9 +51,6 @@ function setGame() {
     document.querySelector('.game-state').innerHTML = ONGOING
 }
 
-function setTimer() {
-    gTimer = {}
-}
 
 function setUndo() {
     gUndo = {}
@@ -152,11 +149,11 @@ function onCellClicked(i, j) {
 
     gUndo.moveQueue.push({ i, j })
 
-    showCell(i, j)
+    setCellShown(i, j)
 
     // is empty cell?
     if (!gBoard[i][j].isMine && gBoard[i][j].minesAroundCount === 0) {
-        showNegs(i, j)
+        setNegsShown(i, j)
     }
 
     // mine or last cell?
@@ -257,19 +254,18 @@ function onWin() {
 }
 
 
-function showNegs(i, j) {
+function setNegsShown(i, j) {
     var negs = getNegs({ i, j })
 
     for (var n = 0; n < negs.length; n++) {
         var coord = negs[n]
-        var shouldFlipNeg = !gBoard[coord.i][coord.j].isShown
-        showCell(coord.i, coord.j)
-        if (!gBoard[coord.i][coord.j].minesAroundCount &&
-            shouldFlipNeg) showNegs(coord.i, coord.j)
+        var shouldShowNegs = !gBoard[coord.i][coord.j].isShown && !gBoard[coord.i][coord.j].minesAroundCount
+        setCellShown(coord.i, coord.j)
+        if (shouldShowNegs) setNegsShown(coord.i, coord.j)
     }
 }
 
-function showCell(i, j) {
+function setCellShown(i, j) {
     if (gBoard[i][j].isShown) return
     if (gBoard[i][j].isMarked) gGame.markedCount--
 
