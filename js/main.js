@@ -100,7 +100,7 @@ function setMinesNegsCount(board) {
 }
 
 function renderBoard(board) {
-    var strHTML = `<table class="game-board"><tbody>`
+    var strHTML = ``
 
     for (var i = 0; i < gLevel.SIZE; i++) {
         strHTML += '<tr>'
@@ -110,20 +110,20 @@ function renderBoard(board) {
             strHTML += `<td class="${classNames}" onclick="onCellClicked(${i}, ${j})" ` +
                 `oncontextmenu="onCellMarked(${i}, ${j})"` +
                 `data-i="${i}" data-j="${j}">` +
-                `${cellContent}` +
+                `<span class='cell-content'>${cellContent}</span>` +
                 `</td>`
         }
         strHTML += '</tr>'
     }
 
-    strHTML += '</tbody></table>'
-    document.querySelector('section.game-container').innerHTML = strHTML
+    document.querySelector('section.game-container>table.game-board').innerHTML = strHTML
 }
 
 function renderCell(i, j) {
     if (!gBoard[i][j].isShown && !gBoard[i][j].isMarked && !gGame.isHint && !gBoard[i][j].isSafe) return
     var elCell = document.querySelector(`td[data-i="${i}"][data-j="${j}"]`)
-    elCell.innerHTML = getCellContent(i, j)
+    var elCellContent = document.querySelector(`td[data-i="${i}"][data-j="${j}"]>span.cell-content`)
+    elCellContent.innerHTML = getCellContent(i, j)
     elCell.classList.remove('hidden-cell')
 }
 
@@ -158,10 +158,6 @@ function onCellClicked(i, j) {
 
     // mine or last cell?
     checkGameOver(i, j)
-}
-
-function getElCell(coord) {
-    return document.querySelector(`td[data-i="${coord.i}"][data-j="${coord.j}"]`)
 }
 
 function onCellMarked(i, j) {
@@ -287,4 +283,16 @@ function onReset(level) {
     document.querySelector('.game-time').innerHTML = 0
 
     onInit(level)
+}
+
+function onMouseMove(event) {
+    updateAreaSelect(event.target) // mega-hint handler
+}
+
+function getElCell(coord) {
+    return document.querySelector(`td[data-i="${coord.i}"][data-j="${coord.j}"]`)
+}
+
+function getCellCoord(elCell) {
+    return {i: +elCell.getAttribute('data-i'), j: +elCell.getAttribute('data-j')}
 }

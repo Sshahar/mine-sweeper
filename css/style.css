@@ -15,6 +15,7 @@ body {
     --bg-safe-click: #00a9e9;
     --bg-mega-hint: #00a9e9;
     --bg-clr-dark-mode: black;
+    --bg-mega-hint: #c55a11;
 }
 
 table.game-board {

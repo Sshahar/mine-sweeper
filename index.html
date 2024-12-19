@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="css/dark-mode.css">
     <link rel="stylesheet" href="css/input.css">
     <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/mega-hint.css">
 </head>
 
 <body onload="onInit()" oncontextmenu="return false">
@@ -42,7 +43,9 @@
             </div>
         </section>
 
-        <section class="game-container"></section>
+        <section class="game-container">
+            <table class="game-board" onmousemove="onMouseMove(event)"><tbody></tbody></table>
+        </section>
 
         <section class="stats-container">
             <div>Lives: <span class="lives-count">0</span></div>
