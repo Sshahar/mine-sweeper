@@ -120,8 +120,12 @@ function renderBoard(board) {
 }
 
 function renderCell(i, j) {
-    if (!gBoard[i][j].isShown && !gBoard[i][j].isMarked && !gGame.isHint && !gBoard[i][j].isSafe) return
     var elCell = document.querySelector(`td[data-i="${i}"][data-j="${j}"]`)
+    var cell = gBoard[i][j] 
+    if (!cell.isShown && !cell.isMarked && !cell.isSafe && !cell.isHint && !gMegaHint.isMegaHint) {
+        elCell.classList.add('hidden-cell')
+        return
+    }
     var elCellContent = document.querySelector(`td[data-i="${i}"][data-j="${j}"]>span.cell-content`)
     elCellContent.innerHTML = getCellContent(i, j)
     elCell.classList.remove('hidden-cell')
@@ -286,7 +290,7 @@ function startGame(i, j) {
     setMines(gBoard)
 
     var elBtns = document.querySelectorAll('.btn-off')
-    for (var i=0; i<elBtns.length; i++) {
+    for (var i = 0; i < elBtns.length; i++) {
         elBtns[i].classList.remove('btn-off')
         elBtns[i].classList.add('btn-on')
     }

@@ -18,13 +18,36 @@ function onHintClicked(elHint) {
 
 function revealHint(coord, revealMs = 1000) {
     var peekCells = [coord].concat(getNegs(coord))
+    timedRender(peekCells, 'isHint', revealMs)
+}
 
-    for (var n = 0; n < peekCells.length; n++) {
-        var cell = peekCells[n]
-        gBoard[cell.i][cell.j].isMarked = false
+function timedRender(cells, flag, revealMs) {
+    // Set cells to hint
+    setCellsFlag(flag, true, cells)
+
+    // render cells
+    renderCells(cells)
+
+    setTimeout(() => {
+        setCellsFlag(flag, false, cells)
+        renderCells(cells)
+        gGame.isHint = false    // TODO: remove this variable
+    }, revealMs, cells)
+}
+
+function setCellsFlag(flag, value, cells) {
+    // Set cells to hint
+    for (var n = 0; n < cells.length; n++) {
+        var cell = cells[n]
+        gBoard[cell.i][cell.j][flag] = value
+    }
+}
+
+function renderCells(cells) {
+    for (var n = 0; n < cells.length; n++) {
+        var cell = cells[n]
         renderCell(cell.i, cell.j)
     }
-    setTimeout(hideCells, revealMs, peekCells)
 }
 
 function hideCells(cells) {
@@ -33,5 +56,4 @@ function hideCells(cells) {
         var elCell = getElCell(cell)
         if (!gBoard[cell.i][cell.j].isShown) elCell.classList.add('hidden-cell')
     }
-    gGame.isHint = false
 }

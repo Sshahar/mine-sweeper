@@ -50,21 +50,22 @@ function updateAreaSelect(elCell) {
     indicateArea(gMegaHint.state === 1)
 }
 
-function indicateArea(shouldMark) {
+function indicateArea(shouldIndicate) {
     var coord1 = gMegaHint.coord1
     var coord2 = gMegaHint.coord2
 
     // render cells
     var cells = getCellsInArea(coord1, coord2)
+    
     for (var i = 0; i < cells.length; i++) {
         var cell = cells[i]
         var cellEl = getElCell(cell)
         var elCellContent = cellEl.firstChild
 
-        if (shouldMark && !gBoard[cell.i][cell.j].isShown) {
+        if (shouldIndicate && !gBoard[cell.i][cell.j].isShown) { // add indicate
             cellEl.classList.add('mega-hint')
             elCellContent.classList.add('hidden-cell')
-        } else {
+        } else { // remove indicate
             cellEl.classList.remove('mega-hint')
             elCellContent.classList.remove('hidden-cell')
         }
