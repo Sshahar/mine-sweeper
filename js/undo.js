@@ -11,6 +11,7 @@ function onEditorClick(elBtn) {
 
 function onUndo() {
     if (!gGame.isOn) return
+    
     gUndo.isActive = true
     // restores board state to last move
     onInit(gLevel.SIZE, true)

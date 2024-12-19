@@ -22,12 +22,12 @@
             <button class="btn btn-dark-mode" onclick="onDarkModeToggle()">Dark mode</button>
 
             <div>
-                <button class="btn btn-safe-click" onclick="onSafeClick()">Safe Click</button>
+                <button class="btn btn-off btn-safe-click" onclick="onSafeClick()">Safe Click</button>
                 <div><span class="safe-click-count">3</span> clicks available</div>
             </div>
 
             <section class="undo-container">
-                <button class="btn btn-undo" onclick="onUndo()">Undo</button>
+                <button class="btn btn-off btn-undo" onclick="onUndo()">Undo</button>
             </section>
 
             <button onclick="onReset()" class="btn game-state"></button>
@@ -39,8 +39,10 @@
             </div>
 
             <div>
-                <button class="btn btn-mega-hint" onclick="onMegaHint()">Mega Hint</button>
+                <button class="btn btn-off btn-mega-hint" onclick="onMegaHint()">Mega Hint</button>
             </div>
+
+            <button class="btn btn-on btn-editor" onclick="onEditorClick(this)">Edit</button>
         </section>
 
         <section class="game-container">
@@ -80,10 +82,6 @@
                 </thead>
                 <tbody class="leaderboard"></tbody>
             </table>
-        </section>
-
-        <section class="editor-container">
-            <button class="btn btn-editor" onclick="onEditorClick(this)">Edit</button>
         </section>
     </main>
 

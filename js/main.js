@@ -129,9 +129,7 @@ function renderCell(i, j) {
 
 function onCellClicked(i, j) {
     if (!gGame.isOn && !gGame.isEditorMode && !gGame.shownCount) {
-        gGame.isOn = true
-        gFirstMoveCoord = { i, j }
-        setMines(gBoard)
+        startGame(i, j)
         if (!gUndo.isActive) startTimer()
         gUndo.backupBoard = _.cloneDeep(gBoard)
     } else if (gGame.isHint) {
@@ -295,4 +293,19 @@ function getElCell(coord) {
 
 function getCellCoord(elCell) {
     return {i: +elCell.getAttribute('data-i'), j: +elCell.getAttribute('data-j')}
+}
+
+function startGame(i, j) {
+    gGame.isOn = true
+    gFirstMoveCoord = { i, j }
+    setMines(gBoard)
+
+    var elBtns = document.querySelectorAll('.btn-off')
+    for (var i=0; i<elBtns.length; i++) {
+        elBtns[i].classList.remove('btn-off')
+        elBtns[i].classList.add('btn-on')
+    }
+
+    debugger
+    document.querySelector('.btn-editor').classList.remove('btn-on')
 }
