@@ -1,17 +1,8 @@
 var gUndo
 
-function onEditorMode(i, j) {
-    gBoard[i][j].isMine = true
-}
-
-function onEditorClick(elBtn) {
-    gGame.isEditorMode = !gGame.isEditorMode
-    elBtn.classList.toggle('edit-mode')
-}
-
 function onUndo() {
     if (!gGame.isOn) return
-    
+
     gUndo.isActive = true
     // restores board state to last move
     onInit(gLevel.SIZE, true)
