@@ -1,5 +1,10 @@
 var gUndo
 
+function startUndo() {
+    if (!gUndo.isActive) startTimer()
+    gUndo.backupBoard = _.cloneDeep(gBoard)
+}
+
 function onUndo() {
     if (!gGame.isOn) return
 

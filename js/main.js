@@ -15,7 +15,9 @@ var WIN = '😎'
 var ONGOING = '😄'
 
 function onInit(level = 4, isUndo) {
+    // Set total mine count & board size
     setLevel(level)
+    
     setGame()
     setLeaderboard()
     setHints()
@@ -29,11 +31,7 @@ function onInit(level = 4, isUndo) {
         setMegaHint()
         gUndo.isActive = false
     }
-    // setStorage()
-    // populateLeaderboardForTesting()
 }
-
-
 
 function setGame() {
     gGame = {
@@ -41,11 +39,11 @@ function setGame() {
         shownCount: 0,
         markedCount: 0,
         secsPassed: 0,
-        LIVES: 5,
+        LIVES: 3, // undo undo
         isEditorMode: false,
-        safeClickCount: 3,
-        canMineExterminator: true,
-        canMegaHint: true,
+        safeClickCount: 3, // undo undo
+        canMineExterminator: true, // undo undo
+        canMegaHint: true, // undo undo
     }
     renderStats()
     document.querySelector('.game-state').innerHTML = ONGOING
@@ -77,17 +75,17 @@ function setMines(board) {
 }
 
 function placeMines(board) {
-    board[0][0].isMine = true
-    board[2][2].isMine = true
+    // board[0][0].isMine = true
+    // board[2][2].isMine = true
 
-    // var emptyCells = getEmptyCells(gLevel.SIZE, board)
-    // for (var mineCnt = gLevel.MINES; mineCnt > 0; mineCnt--) {
-    //     var rndIdx = getRandomInt(0, emptyCells.length)
-    //     console.log('rndIdx:', rndIdx)
-    //     var cellCoord = emptyCells.splice(rndIdx, 1)[0]
-    //     console.log('cellCoord:', cellCoord)
-    //     board[cellCoord.i][cellCoord.j].isMine = true
-    // }
+    var emptyCells = getEmptyCells(gLevel.SIZE, board)
+    for (var mineCnt = gLevel.MINES; mineCnt > 0; mineCnt--) {
+        var rndIdx = getRandomInt(0, emptyCells.length)
+        console.log('rndIdx:', rndIdx)
+        var cellCoord = emptyCells.splice(rndIdx, 1)[0]
+        console.log('cellCoord:', cellCoord)
+        board[cellCoord.i][cellCoord.j].isMine = true
+    }
 }
 
 function setMinesNegsCount(board) {
@@ -134,8 +132,7 @@ function renderCell(i, j) {
 function onCellClicked(i, j) {
     if (!gGame.isOn && !gGame.isEditorMode && !gGame.shownCount) {
         startGame(i, j)
-        if (!gUndo.isActive) startTimer()
-        gUndo.backupBoard = _.cloneDeep(gBoard)
+        startUndo()
     } else if (gGame.isHint) {
         revealHint({ i, j })
         gGame.isHint = false
